@@ -1,0 +1,867 @@
+<!DOCTYPE html>
+<html lang="zh-HK">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Chiikawa 飛行棋大戰</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore-compat.js"></script>
+    <!-- FontAwesome for Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #fff1f2; user-select: none; }
+        .board-container { aspect-ratio: 1/1; position: relative; background: white; border-radius: 12px; box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .cell { position: absolute; width: 6%; height: 6%; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 10px; font-weight: bold; transition: all 0.3s; }
+        .cell-border { border: 2px solid rgba(0,0,0,0.1); }
+        
+        /* Character Themes */
+        .theme-red { background-color: #ff9999; color: white; } /* Chiikawa */
+        .theme-yellow { background-color: #fde047; color: #854d0e; } /* Usagi */
+        .theme-blue { background-color: #60a5fa; color: white; } /* Hachiware */
+        .theme-green { background-color: #4ade80; color: #14532d; } /* Momonga */
+
+        .piece { 
+            position: absolute; width: 7%; height: 7%; /* Slightly larger for images */
+            border-radius: 50%; border: 2px solid white; 
+            display: flex; align-items: center; justify-content: center; 
+            cursor: pointer; overflow: hidden; background: white;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            z-index: 20; box-shadow: 0 4px 6px rgba(0,0,0,0.3);
+        }
+        .piece img { width: 100%; height: 100%; object-fit: cover; }
+        .piece:hover { transform: scale(1.3) translateY(-5px); z-index: 30; }
+        .piece.active-turn { animation: bounce 1s infinite; border: 3px solid #facc15; box-shadow: 0 0 15px #facc15; }
+
+        @keyframes bounce {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+
+        .modal { position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.8); display:flex; align-items:center; justify-content:center; z-index: 50; }
+        
+        /* Dice Animation */
+        .dice-box { width: 70px; height: 70px; background: white; border-radius: 15px; display: flex; align-items: center; justify-content: center; font-size: 36px; border: 3px solid #e5e7eb; box-shadow: 0 4px 6px rgba(0,0,0,0.1); }
+        .rolling { animation: shake 0.5s infinite; background-color: #fff1f2; }
+        @keyframes shake {
+            0% { transform: rotate(0deg); }
+            25% { transform: rotate(15deg); }
+            75% { transform: rotate(-15deg); }
+            100% { transform: rotate(0deg); }
+        }
+
+        /* Avatar in seat */
+        .seat-avatar { width: 40px; height: 40px; border-radius: 50%; overflow: hidden; border: 2px solid white; box-shadow: 0 2px 4px rgba(0,0,0,0.1); background: white; }
+        .seat-avatar img { width: 100%; height: 100%; object-fit: contain; }
+    </style>
+</head>
+<body class="h-screen w-full overflow-hidden flex flex-col items-center">
+
+    <!-- SETUP CONFIGURATION WARNING -->
+    <div id="config-warning" class="fixed inset-0 z-[100] bg-gray-900 text-white flex flex-col items-center justify-center p-8 text-center hidden">
+        <h2 class="text-3xl font-bold mb-4">⚠️ 尚未設定 Firebase</h2>
+        <p class="mb-4">Penny，請用編輯器打開此檔案，填寫你的 Firebase Config。</p>
+        <p class="text-sm text-gray-400">搜尋 `const firebaseConfig` 並填入你的 API Key。</p>
+    </div>
+
+    <!-- CONNECTION STATUS INDICATOR -->
+    <div id="connection-status" class="fixed bottom-2 right-2 px-3 py-1 bg-gray-200 text-gray-600 rounded-full text-xs font-bold z-[60]">
+        正在連接伺服器...
+    </div>
+
+    <!-- OFFLINE MODE PROMPT -->
+    <div id="offline-prompt" class="modal hidden">
+        <div class="bg-white p-6 rounded-2xl shadow-xl w-full max-w-sm text-center relative overflow-hidden">
+            <div class="absolute top-0 left-0 w-full h-2 bg-gradient-to-r from-pink-400 to-blue-400"></div>
+            <h2 class="text-2xl font-bold mb-2 text-gray-800">無法連線到伺服器</h2>
+            <p class="text-gray-500 mb-6 text-sm">可能係網絡或瀏覽器限制。唔緊要，你可以即刻玩單機版！</p>
+            <button onclick="startOfflineMode()" class="w-full bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold py-3 px-6 rounded-xl shadow-lg hover:from-pink-600 hover:to-red-600 transition transform hover:scale-105">
+                🎮 進入單機/離線模式
+            </button>
+        </div>
+    </div>
+
+    <!-- LOBBY SCREEN -->
+    <div id="lobby-screen" class="w-full h-full flex flex-col items-center justify-center p-4 bg-pink-50">
+        <div class="bg-white p-8 rounded-2xl shadow-xl w-full max-w-md text-center">
+            <h1 class="text-4xl font-bold mb-2 text-pink-500">Chiikawa 飛行棋 ✈️</h1>
+            <p class="text-gray-500 mb-8">約埋朋友一齊玩！</p>
+            
+            <div class="mb-4 text-left">
+                <label class="block text-gray-700 text-sm font-bold mb-2">你的名字 (暱稱)</label>
+                <input id="player-name-input" type="text" class="shadow appearance-none border rounded w-full py-3 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline" placeholder="例如: Penny">
+            </div>
+
+            <div class="grid grid-cols-2 gap-4">
+                <button onclick="createRoom()" class="bg-pink-500 hover:bg-pink-600 text-white font-bold py-3 px-4 rounded-xl transition duration-200">
+                    <i class="fa-solid fa-plus mr-2"></i>開設房間
+                </button>
+                <button onclick="showJoinInput()" class="bg-blue-400 hover:bg-blue-500 text-white font-bold py-3 px-4 rounded-xl transition duration-200">
+                    <i class="fa-solid fa-door-open mr-2"></i>加入房間
+                </button>
+            </div>
+
+            <div id="join-input-area" class="mt-4 hidden">
+                <input id="room-id-input" type="text" class="border p-2 rounded w-full mb-2" placeholder="輸入房間號碼">
+                <button onclick="joinRoom()" class="w-full bg-green-500 text-white py-2 rounded">確定加入</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ROOM / GAME SCREEN -->
+    <div id="game-screen" class="w-full h-full hidden flex-col md:flex-row max-w-6xl mx-auto p-2 md:p-4 gap-4">
+        
+        <!-- Sidebar / Info Panel -->
+        <div class="w-full md:w-1/3 flex flex-col gap-4 order-2 md:order-1 h-[25vh] md:h-auto">
+            <!-- Room Info & Controls Wrapper -->
+            <div class="bg-white p-4 rounded-xl shadow-md flex flex-col h-full relative">
+                
+                <!-- Top Bar: Room ID -->
+                <div class="flex justify-between items-center mb-2">
+                    <h2 class="font-bold text-gray-700 text-sm md:text-base">房間: <span id="display-room-id" class="text-pink-600 font-mono"></span></h2>
+                    <button onclick="copyRoomId()" class="text-xs bg-gray-200 px-2 py-1 rounded">複製</button>
+                </div>
+                
+                <div id="room-status-text" class="text-xs text-center py-1 bg-yellow-100 text-yellow-800 rounded mb-2">準備中...</div>
+
+                <!-- Start Game Button (Initial) -->
+                <button id="start-game-btn" onclick="startGame()" class="w-full mb-2 bg-gradient-to-r from-pink-500 to-red-500 text-white font-bold py-3 rounded-xl shadow-lg animate-pulse hidden z-50">
+                    🚀 開始遊戲 (Start)
+                </button>
+
+                <!-- Game Controls (Visible when Playing) -->
+                <div id="game-controls" class="hidden flex-1 flex flex-col items-center justify-center text-center">
+                    <div id="turn-indicator" class="text-lg md:text-xl font-bold mb-2">輪到你了!</div>
+                    
+                    <div class="flex items-center gap-4">
+                        <div id="dice-visual" class="dice-box">🎲</div>
+                        <button id="roll-btn" onclick="rollDice()" class="bg-indigo-600 text-white px-6 py-3 rounded-full font-bold text-lg shadow-lg hover:bg-indigo-700 disabled:opacity-50 disabled:cursor-not-allowed transition transform active:scale-95">
+                            擲骰!
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Seats (Compact Grid) -->
+                <div class="grid grid-cols-4 gap-2 mt-auto pt-2 border-t" id="seats-container">
+                    <!-- Seats generated by JS -->
+                </div>
+                
+                <!-- Log -->
+                 <div id="game-log" class="hidden md:block mt-2 text-xs text-gray-500 h-20 overflow-y-auto w-full text-left border-t pt-2">
+                    <p>歡迎來到 Chiikawa 世界！</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Board Area -->
+        <div class="w-full md:w-2/3 order-1 md:order-2 flex items-center justify-center h-[70vh] md:h-auto">
+            <div class="board-container w-full max-w-[600px] shadow-2xl bg-white relative" id="board">
+                <!-- SVG Background for Lines/Tracks -->
+                <svg width="100%" height="100%" viewBox="0 0 100 100" class="absolute inset-0 pointer-events-none opacity-20">
+                    <line x1="0" y1="0" x2="100" y2="100" stroke="#ddd" stroke-dasharray="2" stroke-width="0.5" />
+                    <line x1="100" y1="0" x2="0" y2="100" stroke="#ddd" stroke-dasharray="2" stroke-width="0.5" />
+                </svg>
+
+                <!-- Board Cells generated by JS -->
+                <div id="board-cells"></div>
+                
+                <!-- Center Home -->
+                <div class="absolute inset-0 m-auto w-[16%] h-[16%] bg-gradient-to-br from-pink-100 to-blue-100 rounded-xl flex items-center justify-center z-10 border-4 border-white shadow-inner">
+                    <span class="text-2xl">🏁</span>
+                </div>
+                
+                <!-- Hangars (Bases) -->
+                <div class="absolute top-0 left-0 w-[30%] h-[30%] bg-red-50 rounded-br-[40px] border-r-4 border-b-4 border-red-200 flex flex-col items-center justify-center z-0">
+                    <img src="https://static.wikia.nocookie.net/chiikawa/images/e/e5/Chiikawa_Appearance.png" class="w-1/2 h-1/2 object-contain opacity-50 mb-1">
+                    <span class="text-xs font-bold text-red-400">吉伊 (紅)</span>
+                </div>
+                <div class="absolute top-0 right-0 w-[30%] h-[30%] bg-yellow-50 rounded-bl-[40px] border-l-4 border-b-4 border-yellow-200 flex flex-col items-center justify-center z-0">
+                    <img src="https://static.wikia.nocookie.net/chiikawa/images/c/c5/Usagi_Appearance.png" class="w-1/2 h-1/2 object-contain opacity-50 mb-1">
+                    <span class="text-xs font-bold text-yellow-600">兔兔 (黃)</span>
+                </div>
+                <div class="absolute bottom-0 right-0 w-[30%] h-[30%] bg-blue-50 rounded-tl-[40px] border-l-4 border-t-4 border-blue-200 flex flex-col items-center justify-center z-0">
+                    <img src="https://static.wikia.nocookie.net/chiikawa/images/2/25/Hachiware_Appearance.png" class="w-1/2 h-1/2 object-contain opacity-50 mb-1">
+                    <span class="text-xs font-bold text-blue-500">小八 (藍)</span>
+                </div>
+                <div class="absolute bottom-0 left-0 w-[30%] h-[30%] bg-green-50 rounded-tr-[40px] border-r-4 border-t-4 border-green-200 flex flex-col items-center justify-center z-0">
+                    <img src="https://static.wikia.nocookie.net/chiikawa/images/7/77/Momonga_Appearance.png" class="w-1/2 h-1/2 object-contain opacity-50 mb-1">
+                    <span class="text-xs font-bold text-green-600">小桃 (綠)</span>
+                </div>
+
+                <!-- Pieces Layer -->
+                <div id="pieces-layer"></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- WINNER MODAL -->
+    <div id="winner-modal" class="modal hidden">
+        <div class="bg-white p-8 rounded-2xl text-center max-w-sm mx-4 animate-bounce">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-bold text-pink-600 mb-2">遊戲結束!</h2>
+            <p id="winner-text" class="text-xl mb-6">??? 勝出!</p>
+            <button onclick="location.reload()" class="bg-pink-500 text-white px-6 py-2 rounded-full font-bold">再來一局</button>
+        </div>
+    </div>
+
+<script>
+// ==========================================
+// 1. CONFIGURATION
+// ==========================================
+const firebaseConfig = {
+  apiKey: "AIzaSyATWvqpM9JcwgpTdDwxpAPq_cvhL5Q_Me4",
+  authDomain: "chiikawa-aerochess.firebaseapp.com",
+  projectId: "chiikawa-aerochess",
+  storageBucket: "chiikawa-aerochess.firebasestorage.app",
+  messagingSenderId: "611121853750",
+  appId: "1:611121853750:web:1fbb6b65ec527e53eeef97",
+  measurementId: "G-HL1WZHQRJR"
+};
+
+// ==========================================
+// 2. APP INITIALIZATION & STATE
+// ==========================================
+let app, auth, db;
+let currentUser = null;
+let currentRoomId = null;
+let roomUnsubscribe = null;
+let myColor = null; 
+let gameData = null; 
+let isOffline = false; 
+
+// Character Assets with Images
+// Using reliable Wiki URLs. If these fail due to hotlinking, we might need base64, but let's try.
+const CHARACTERS = {
+    red:    { name: '吉伊', img: 'https://static.wikia.nocookie.net/chiikawa/images/e/e5/Chiikawa_Appearance.png', color: 'red', bg: 'bg-red-500',  light: 'bg-red-100' },
+    yellow: { name: '兔兔', img: 'https://static.wikia.nocookie.net/chiikawa/images/c/c5/Usagi_Appearance.png', color: 'yellow', bg: 'bg-yellow-400', light: 'bg-yellow-100' },
+    blue:   { name: '小八', img: 'https://static.wikia.nocookie.net/chiikawa/images/2/25/Hachiware_Appearance.png', color: 'blue', bg: 'bg-blue-500', light: 'bg-blue-100' },
+    green:  { name: '小桃', img: 'https://static.wikia.nocookie.net/chiikawa/images/7/77/Momonga_Appearance.png', color: 'green', bg: 'bg-green-500', light: 'bg-green-100' }
+};
+
+// Board Logic: Coordinate Mapping (0-100%)
+const TRACK_COORDS = [
+    {x:10,y:40}, {x:14,y:40}, {x:18,y:40}, {x:22,y:40}, {x:26,y:30}, {x:26,y:26}, {x:26,y:22}, {x:26,y:18}, {x:26,y:14}, {x:26,y:10}, {x:30,y:10}, {x:34,y:10}, {x:40,y:10}, // 0-12
+    {x:60,y:10}, {x:66,y:10}, {x:70,y:10}, {x:74,y:10}, {x:74,y:14}, {x:74,y:18}, {x:74,y:22}, {x:74,y:26}, {x:74,y:30}, {x:78,y:40}, {x:82,y:40}, {x:86,y:40}, {x:90,y:40}, // 13-25
+    {x:90,y:60}, {x:86,y:60}, {x:82,y:60}, {x:78,y:60}, {x:74,y:70}, {x:74,y:74}, {x:74,y:78}, {x:74,y:82}, {x:74,y:86}, {x:74,y:90}, {x:70,y:90}, {x:66,y:90}, {x:60,y:90}, // 26-38
+    {x:40,y:90}, {x:34,y:90}, {x:30,y:90}, {x:26,y:90}, {x:26,y:86}, {x:26,y:82}, {x:26,y:78}, {x:26,y:74}, {x:26,y:70}, {x:22,y:60}, {x:18,y:60}, {x:14,y:60}, {x:10,y:60}  // 39-51
+];
+const HOME_TRACKS = {
+    red:    [{x:14,y:50}, {x:20,y:50}, {x:26,y:50}, {x:32,y:50}, {x:38,y:50}, {x:44,y:50}],
+    yellow: [{x:50,y:14}, {x:50,y:20}, {x:50,y:26}, {x:50,y:32}, {x:50,y:38}, {x:50,y:44}],
+    blue:   [{x:86,y:50}, {x:80,y:50}, {x:74,y:50}, {x:68,y:50}, {x:62,y:50}, {x:56,y:50}],
+    green:  [{x:50,y:86}, {x:50,y:80}, {x:50,y:74}, {x:50,y:68}, {x:50,y:62}, {x:50,y:56}]
+};
+const START_INDICES = { red: 0, yellow: 13, blue: 26, green: 39 };
+const HANGAR_COORDS = {
+    red:    [{x:10,y:10}, {x:20,y:10}, {x:10,y:20}, {x:20,y:20}],
+    yellow: [{x:80,y:10}, {x:90,y:10}, {x:80,y:20}, {x:90,y:20}],
+    blue:   [{x:80,y:80}, {x:90,y:80}, {x:80,y:90}, {x:90,y:90}],
+    green:  [{x:10,y:80}, {x:20,y:80}, {x:10,y:90}, {x:20,y:90}]
+};
+
+// Init Logic
+function initApp() {
+    if (!firebaseConfig.apiKey) {
+        document.getElementById('config-warning').classList.remove('hidden');
+        return;
+    }
+    
+    const statusEl = document.getElementById('connection-status');
+    statusEl.innerText = "連接 Firebase 中...";
+    statusEl.className = "fixed bottom-2 right-2 px-3 py-1 bg-yellow-200 text-yellow-800 rounded-full text-xs font-bold z-[60]";
+
+    try {
+        firebase.initializeApp(firebaseConfig);
+        auth = firebase.auth();
+        db = firebase.firestore();
+        
+        auth.signInAnonymously()
+            .then(user => {
+                currentUser = user.user;
+                console.log("Logged in as", currentUser.uid);
+                statusEl.innerText = "🟢 已連線";
+                statusEl.className = "fixed bottom-2 right-2 px-3 py-1 bg-green-200 text-green-800 rounded-full text-xs font-bold z-[60]";
+                restoreUserSession();
+            })
+            .catch(error => handleLoginError(error, statusEl));
+
+    } catch (e) {
+        console.error("Firebase Init Error:", e);
+        handleLoginError(e, statusEl);
+    }
+
+    renderBoardCells();
+}
+
+function handleLoginError(error, statusEl) {
+    console.error("Login Error:", error);
+    statusEl.innerText = "🔴 連線失敗";
+    statusEl.className = "fixed bottom-2 right-2 px-3 py-1 bg-red-200 text-red-800 rounded-full text-xs font-bold z-[60]";
+    document.getElementById('offline-prompt').classList.remove('hidden');
+}
+
+function restoreUserSession() {
+    const savedName = localStorage.getItem('chiikawa_name');
+    if(savedName) document.getElementById('player-name-input').value = savedName;
+
+    const urlParams = new URLSearchParams(window.location.search);
+    const roomIdParam = urlParams.get('room');
+    if(roomIdParam) {
+        document.getElementById('room-id-input').value = roomIdParam;
+        showJoinInput();
+    }
+}
+
+// ==========================================
+// 3. OFFLINE MODE / MOCK LOGIC
+// ==========================================
+async function startOfflineMode() {
+    isOffline = true;
+    currentUser = { uid: 'offline-user', isAnonymous: true };
+    document.getElementById('offline-prompt').classList.add('hidden');
+    
+    // Update status
+    const statusEl = document.getElementById('connection-status');
+    statusEl.innerText = "🟠 單機模式 (Offline)";
+    statusEl.className = "fixed bottom-2 right-2 px-3 py-1 bg-orange-200 text-orange-800 rounded-full text-xs font-bold z-[60]";
+    
+    restoreUserSession();
+    
+    // Auto-create room for seamless experience
+    await createRoom();
+    
+    // Auto-sit player 1 (Red/Chiikawa)
+    await sitDown('red');
+    
+    // Also auto-sit other dummy players so user can control them? 
+    // User requested "start" button. Let's just sit the user and let them hit start.
+    // If they want to play all colors, they can click "sit" on others.
+    alert("單機模式已啟動！\n\n你可以點擊其他座位自己控制多個角色，或者直接點擊「開始遊戲」！");
+}
+
+// Helper to update state (Online vs Offline)
+async function updateRoomState(roomId, updates) {
+    if (isOffline) {
+        // Mock Update
+        Object.keys(updates).forEach(key => {
+            const parts = key.split('.');
+            let target = gameData;
+            for(let i=0; i<parts.length-1; i++) {
+                if(!target[parts[i]]) target[parts[i]] = {};
+                target = target[parts[i]];
+            }
+            if (updates[key] && typeof updates[key] === 'object' && updates[key].constructor && updates[key].constructor.name === 'FieldValue') {
+                 delete target[parts[parts.length-1]];
+            } else {
+                 target[parts[parts.length-1]] = updates[key];
+            }
+        });
+        updateUI(gameData);
+        return;
+    }
+    // Online
+    return db.collection('rooms').doc(roomId).update(updates);
+}
+
+// ==========================================
+// 4. LOBBY LOGIC
+// ==========================================
+function getPlayerName() {
+    const name = document.getElementById('player-name-input').value.trim() || '無名氏';
+    localStorage.setItem('chiikawa_name', name);
+    return name;
+}
+
+function showJoinInput() {
+    document.getElementById('join-input-area').classList.remove('hidden');
+}
+
+async function createRoom() {
+    if (!currentUser) return alert("尚未連線");
+
+    const name = getPlayerName();
+    
+    const initialData = {
+        hostId: currentUser.uid,
+        status: 'waiting',
+        createdAt: new Date(),
+        players: {}, 
+        gameState: {
+            turn: null, 
+            dice: 0,
+            lastMoved: null,
+            winner: null,
+            pieces: {
+                red: [-1,-1,-1,-1],
+                yellow: [-1,-1,-1,-1],
+                blue: [-1,-1,-1,-1],
+                green: [-1,-1,-1,-1]
+            }
+        }
+    };
+
+    if (isOffline) {
+        const roomId = "OFFLINE-ROOM";
+        gameData = initialData;
+        enterRoom(roomId);
+    } else {
+        try {
+            initialData.createdAt = firebase.firestore.FieldValue.serverTimestamp();
+            const newRoomRef = db.collection('rooms').doc();
+            await newRoomRef.set(initialData);
+            enterRoom(newRoomRef.id);
+        } catch (e) {
+            alert("開設房間失敗: " + e.message);
+        }
+    }
+}
+
+async function joinRoom() {
+    if (!currentUser) return alert("尚未連線");
+    const roomId = document.getElementById('room-id-input').value.trim();
+    if (!roomId) return alert("請輸入房間號碼");
+    
+    if (isOffline) {
+        alert("離線模式無法加入真實房間。請自行開設房間試玩。");
+        return;
+    }
+
+    try {
+        const roomDoc = await db.collection('rooms').doc(roomId).get();
+        if (!roomDoc.exists) return alert("房間不存在");
+        enterRoom(roomId);
+    } catch (e) {
+        alert("加入房間失敗: " + e.message);
+    }
+}
+
+function enterRoom(roomId) {
+    currentRoomId = roomId;
+    document.getElementById('lobby-screen').classList.add('hidden');
+    document.getElementById('game-screen').classList.remove('hidden');
+    document.getElementById('game-screen').classList.add('flex');
+    document.getElementById('display-room-id').innerText = roomId;
+
+    if (isOffline) {
+        updateUI(gameData);
+    } else {
+        roomUnsubscribe = db.collection('rooms').doc(roomId).onSnapshot(doc => {
+            if (!doc.exists) return;
+            gameData = doc.data();
+            updateUI(gameData);
+        }, error => {
+            console.error("Room listener error:", error);
+        });
+    }
+}
+
+function copyRoomId() {
+    navigator.clipboard.writeText(currentRoomId);
+    if (!isOffline) alert("房間號碼已複製！");
+}
+
+// ==========================================
+// 5. GAME UI UPDATES
+// ==========================================
+function updateUI(data) {
+    // 1. Update Seats
+    const seatsContainer = document.getElementById('seats-container');
+    seatsContainer.innerHTML = '';
+    
+    ['red', 'yellow', 'green', 'blue'].forEach(color => {
+        const player = data.players[color];
+        // In offline mode, allow controlling ANY player
+        const isMe = isOffline ? true : (player && player.id === currentUser.uid);
+        
+        // Track "my color" mainly for turn indicator logic in online
+        if (player && player.id === currentUser.uid) myColor = color;
+        // In offline, default myColor to the current turn if I'm playing multiple?
+        // Or just keep myColor as the first seat I sat in.
+        
+        const char = CHARACTERS[color];
+        let seatHtml = '';
+
+        if (player) {
+            seatHtml = `
+                <div class="p-1 border rounded ${char.light} flex flex-col items-center justify-center h-full relative">
+                    <div class="seat-avatar mb-1">
+                        <img src="${char.img}" alt="${char.name}">
+                    </div>
+                    <div class="text-[10px] font-bold text-gray-700 truncate w-full text-center">${player.name}</div>
+                    ${data.status === 'playing' && data.gameState.turn === color ? '<div class="absolute -top-1 -right-1 w-3 h-3 bg-yellow-400 rounded-full animate-ping"></div>' : ''}
+                </div>
+            `;
+        } else {
+            seatHtml = `
+                <button onclick="sitDown('${color}')" class="p-1 border border-dashed border-gray-400 rounded flex flex-col items-center justify-center hover:bg-gray-50 text-gray-400 text-[10px] h-full w-full opacity-60 hover:opacity-100">
+                    <i class="fa-solid fa-chair mb-1"></i>
+                    坐下
+                </button>
+            `;
+        }
+        seatsContainer.innerHTML += seatHtml;
+    });
+
+    // 2. Start Button Visibility
+    if (data.hostId === currentUser.uid && data.status === 'waiting') {
+        const playerCount = Object.keys(data.players).length;
+        const btn = document.getElementById('start-game-btn');
+        btn.classList.remove('hidden');
+        
+        // Offline allowed 1 player start. Online needs 2.
+        const minPlayers = isOffline ? 1 : 2;
+        
+        if (playerCount < minPlayers) {
+            btn.disabled = true;
+            btn.innerText = `等待加入 (${playerCount}/${minPlayers})`;
+            btn.classList.remove('animate-pulse');
+            btn.classList.add('opacity-50', 'cursor-not-allowed');
+        } else {
+            btn.disabled = false;
+            btn.innerText = "🚀 開始遊戲";
+            btn.classList.add('animate-pulse');
+            btn.classList.remove('opacity-50', 'cursor-not-allowed');
+        }
+    } else {
+        document.getElementById('start-game-btn').classList.add('hidden');
+    }
+
+    // 3. Status & Controls
+    const statusText = document.getElementById('room-status-text');
+    const controls = document.getElementById('game-controls');
+    
+    if (data.status === 'playing') {
+        statusText.innerText = "遊戲進行中!";
+        statusText.className = "text-xs text-center py-1 bg-green-100 text-green-800 rounded mb-2";
+        controls.classList.remove('hidden');
+        renderPieces(data.gameState.pieces);
+        updateTurnInfo(data.gameState);
+    } else {
+        controls.classList.add('hidden');
+        renderPieces(data.gameState.pieces); 
+    }
+
+    if (data.gameState.winner) {
+        document.getElementById('winner-modal').classList.remove('hidden');
+        document.getElementById('winner-text').innerText = CHARACTERS[data.gameState.winner].name + " 贏咗啦!";
+    }
+}
+
+function updateTurnInfo(state) {
+    // Determine if it's "my" turn to enable controls
+    // In Offline mode: Always enable controls if the current turn color has a player (or even if it doesn't, allow 'god mode'?)
+    // Let's say in Offline mode, if there is a player in that seat, and I am the host (which I am), I can play.
+    const isOfflineHost = isOffline;
+    const isOnlineTurn = !isOffline && state.turn === myColor;
+    
+    const canPlay = isOfflineHost || isOnlineTurn;
+    
+    const turnName = state.turn ? CHARACTERS[state.turn].name : '...';
+    
+    const turnDiv = document.getElementById('turn-indicator');
+    turnDiv.innerHTML = canPlay
+        ? `<span class="text-pink-600 animate-pulse">輪到 <span class="text-${state.turn}-500">${turnName}</span> 了!</span>` 
+        : `等待 <span class="font-bold text-${state.turn}-500">${turnName}</span>...`;
+
+    const diceBox = document.getElementById('dice-visual');
+    diceBox.innerText = state.dice || '🎲';
+    if (state.dice > 0) diceBox.classList.remove('rolling');
+
+    const rollBtn = document.getElementById('roll-btn');
+    // Enable roll if: It's my turn AND dice is 0.
+    rollBtn.disabled = !canPlay || state.dice > 0;
+    
+    // Auto-roll visual feedback for others?
+}
+
+// ==========================================
+// 6. GAME INTERACTION
+// ==========================================
+async function sitDown(color) {
+    if (gameData.status !== 'waiting') return;
+    
+    // In offline mode, allow multiple seats.
+    // In online mode, switch seats.
+    
+    const updates = {};
+    
+    if (!isOffline) {
+        // Online: Remove self from other seats
+        Object.keys(gameData.players).forEach(c => {
+            if(gameData.players[c].id === currentUser.uid) {
+                updates[`players.${c}`] = firebase.firestore.FieldValue.delete();
+            }
+        });
+    }
+    
+    // Add to new seat
+    // Offline: Use unique IDs for each seat to simulate players? 
+    // Actually, just use same ID but different name logic?
+    // Let's just use "cpu-color" for ID if sitting multiple times in offline
+    const playerId = isOffline ? (currentUser.uid + '-' + color) : currentUser.uid;
+    const name = isOffline ? (color === 'red' ? getPlayerName() : `${CHARACTERS[color].name}(P)`) : getPlayerName();
+
+    updates[`players.${color}`] = {
+        id: playerId,
+        name: name,
+        color: color
+    };
+
+    await updateRoomState(currentRoomId, updates);
+}
+
+async function startGame() {
+    const players = Object.keys(gameData.players);
+    if (!isOffline && players.length < 2) return;
+    if (isOffline && players.length < 1) return;
+    
+    const order = ['red', 'yellow', 'blue', 'green'].filter(c => players.includes(c));
+    
+    await updateRoomState(currentRoomId, {
+        status: 'playing',
+        'gameState.turn': order[0],
+        'gameState.dice': 0
+    });
+}
+
+async function rollDice() {
+    // Validation
+    const canPlay = isOffline || gameData.gameState.turn === myColor;
+    if (!canPlay) return;
+    
+    document.getElementById('dice-visual').classList.add('rolling');
+    
+    setTimeout(async () => {
+        const val = Math.floor(Math.random() * 6) + 1;
+        await updateRoomState(currentRoomId, {
+            'gameState.dice': val
+        });
+        checkAutoSkip(val);
+    }, 500);
+}
+
+async function checkAutoSkip(diceVal) {
+    const turnColor = gameData.gameState.turn;
+    const pieces = gameData.gameState.pieces[turnColor];
+    const canTakeOff = diceVal >= 5; // 5 or 6 to start
+    const hasFlying = pieces.some(p => p >= 0 && p < 106);
+    
+    if (!canTakeOff && !hasFlying) {
+        setTimeout(() => nextTurn(), 1000);
+        logMsg("無法起飛，跳過回合");
+    }
+}
+
+async function pieceClick(color, index) {
+    if (gameData.status !== 'playing') return;
+    
+    // Check turn
+    if (gameData.gameState.turn !== color) return;
+    
+    // Check ownership
+    const isMyPiece = isOffline || (myColor === color);
+    if (!isMyPiece) return;
+    
+    const dice = gameData.gameState.dice;
+    if (dice === 0) return alert("請先擲骰子");
+
+    const currentPos = gameData.gameState.pieces[color][index];
+    
+    // Hangar Logic
+    if (currentPos === -1) {
+        if (dice >= 5) {
+            await movePiece(color, index, 0); 
+        } else {
+            alert("需要 5 或 6 點才能起飛!");
+        }
+        return;
+    }
+    
+    // Move Logic
+    let newPos = currentPos + dice;
+    
+    // Home Bounce Logic
+    if (currentPos < 100 && newPos > 50) {
+        const overflow = newPos - 50;
+        newPos = 100 + (overflow - 1); 
+    }
+    if (newPos > 106) {
+        const diff = newPos - 106;
+        newPos = 106 - diff;
+    }
+    
+    await movePiece(color, index, newPos);
+}
+
+async function movePiece(color, pieceIndex, newPos) {
+    const newPieces = [...gameData.gameState.pieces[color]];
+    newPieces[pieceIndex] = newPos;
+    
+    const updates = {
+        [`gameState.pieces.${color}`]: newPieces,
+        'gameState.dice': 0 
+    };
+    
+    // Collision
+    let didCollide = false;
+    if (newPos >= 0 && newPos <= 50) {
+        const myGlobal = getGlobalPos(color, newPos);
+        ['red', 'yellow', 'blue', 'green'].forEach(oppColor => {
+            if (oppColor === color) return;
+            const oppPieces = gameData.gameState.pieces[oppColor];
+            if (!oppPieces) return;
+            
+            oppPieces.forEach((oppP, idx) => {
+                if (oppP >= 0 && oppP <= 50) {
+                    const oppGlobal = getGlobalPos(oppColor, oppP);
+                    if (myGlobal === oppGlobal) {
+                        updates[`gameState.pieces.${oppColor}.${idx}`] = -1; 
+                        didCollide = true;
+                        console.log(`Kicked ${oppColor}!`);
+                        logMsg(`${CHARACTERS[color].name} 撞飛了 ${CHARACTERS[oppColor].name}!`);
+                    }
+                }
+            });
+        });
+    }
+
+    // Jump (Simplistic: Every 4 squares is same color)
+    let finalPos = newPos;
+    if (newPos > 0 && newPos < 50 && newPos % 4 === 0) {
+        finalPos += 4;
+        logMsg("跳躍!");
+    }
+
+    newPieces[pieceIndex] = finalPos;
+    updates[`gameState.pieces.${color}`] = newPieces;
+
+    if (newPieces.every(p => p === 106)) {
+        updates['gameState.winner'] = color;
+        updates['status'] = 'finished';
+    }
+
+    await updateRoomState(currentRoomId, updates);
+    
+    if (gameData.gameState.dice !== 6 && !gameData.gameState.winner) {
+        nextTurn();
+    }
+}
+
+async function nextTurn() {
+    const players = ['red', 'yellow', 'blue', 'green'].filter(c => gameData.players[c]);
+    // Sort logic to ensure constant turn order: Red, Yellow, Blue, Green
+    const priority = { red: 1, yellow: 2, blue: 3, green: 4 };
+    players.sort((a,b) => priority[a] - priority[b]);
+    
+    const currentIdx = players.indexOf(gameData.gameState.turn);
+    const nextIdx = (currentIdx + 1) % players.length;
+    
+    await updateRoomState(currentRoomId, {
+        'gameState.turn': players[nextIdx],
+        'gameState.dice': 0
+    });
+}
+
+function getGlobalPos(color, relativePos) {
+    let global = (START_INDICES[color] + relativePos) % 52;
+    return global;
+}
+
+function logMsg(msg) {
+    const log = document.getElementById('game-log');
+    const p = document.createElement('p');
+    p.innerText = msg;
+    log.prepend(p);
+}
+
+// ==========================================
+// 7. RENDERERS
+// ==========================================
+function renderBoardCells() {
+    const board = document.getElementById('board-cells');
+    board.innerHTML = '';
+    
+    TRACK_COORDS.forEach((pos, i) => {
+        const colors = ['red', 'yellow', 'blue', 'green'];
+        const colorIdx = i % 4; 
+        const cellColor = colors[colorIdx];
+        
+        const div = document.createElement('div');
+        div.className = `cell cell-border bg-white border-${cellColor}-200`;
+        div.style.left = pos.x + '%';
+        div.style.top = pos.y + '%';
+        div.innerHTML = `<div class="w-full h-full rounded-full opacity-20 bg-${cellColor}-500"></div>`;
+        board.appendChild(div);
+    });
+
+    Object.keys(HOME_TRACKS).forEach(c => {
+        HOME_TRACKS[c].forEach(pos => {
+            const div = document.createElement('div');
+            div.className = `cell bg-${c}-100`;
+            div.style.left = pos.x + '%';
+            div.style.top = pos.y + '%';
+            board.appendChild(div);
+        });
+    });
+}
+
+function renderPieces(piecesData) {
+    const layer = document.getElementById('pieces-layer');
+    layer.innerHTML = '';
+    
+    const turnColor = gameData?.gameState?.turn;
+    const diceVal = gameData?.gameState?.dice;
+
+    Object.keys(piecesData).forEach(color => {
+        piecesData[color].forEach((pos, index) => {
+            const el = document.createElement('div');
+            el.className = `piece ${CHARACTERS[color].bg} text-white`;
+            // Use Image instead of Text
+            el.innerHTML = `<img src="${CHARACTERS[color].img}" alt="piece">`;
+            
+            let x, y;
+            if (pos === -1) {
+                const coords = HANGAR_COORDS[color][index];
+                x = coords.x;
+                y = coords.y;
+            } else if (pos === 106) {
+                x = 50 + (Math.random()*4-2); 
+                y = 50 + (Math.random()*4-2);
+            } else if (pos >= 100) {
+                const homeIdx = pos - 100;
+                const coords = HOME_TRACKS[color][homeIdx];
+                x = coords.x;
+                y = coords.y;
+            } else {
+                const globalIdx = getGlobalPos(color, pos);
+                const coords = TRACK_COORDS[globalIdx];
+                x = coords.x;
+                y = coords.y;
+            }
+            
+            el.style.left = `calc(${x}% - 3.5%)`; 
+            el.style.top = `calc(${y}% - 3.5%)`;
+
+            // Logic for "Active" piece
+            const canControl = isOffline || (myColor === color);
+            const isTurn = turnColor === color;
+            
+            if (gameData.status === 'playing' && isTurn && canControl) {
+                el.classList.add('cursor-pointer');
+                if (diceVal > 0) el.classList.add('active-turn');
+                el.onclick = () => pieceClick(color, index);
+            }
+
+            layer.appendChild(el);
+        });
+    });
+}
+
+window.onload = initApp;
+</script>
+</body>
+</html>
