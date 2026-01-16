@@ -3,307 +3,228 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>理工升學決策指南 - 考量與實質建議</title>
+    <title>理工升學決策導航 - 專業增強版</title>
     <script src="https://cdn.tailwindcss.com"></script>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1e40af;
+            --accent: #fbbf24;
+        }
         body {
-            font-family: 'Inter', 'Noto Sans TC', sans-serif;
+            font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
             scroll-behavior: smooth;
         }
-        .gradient-bg {
-            background: linear-gradient(135deg, #1e293b 0%, #334155 100%);
+        .mesh-gradient {
+            background: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0, transparent 50%),
+                        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0, transparent 50%);
         }
-        .suggestion-card {
-            border-left: 4px solid #3b82f6;
-            background: #f8fafc;
+        .glass {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         }
         .tab-active {
-            background-color: #3b82f6;
-            color: white;
-            border-radius: 0.5rem;
+            background: white;
+            color: var(--primary);
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
-        .action-point {
-            display: flex;
-            align-items: flex-start;
-            gap: 0.5rem;
-            margin-bottom: 0.5rem;
+        .card-anim {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
-        .action-point svg {
-            flex-shrink: 0;
-            margin-top: 0.25rem;
+        .card-anim:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
         }
+        /* 自定義滾動條 */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900">
+<body class="bg-slate-50 text-slate-900 mesh-gradient">
 
     <!-- Navigation -->
-    <nav class="sticky top-0 z-50 bg-white/90 backdrop-blur-md border-b border-slate-200">
+    <nav class="sticky top-0 z-50 glass border-b border-slate-200">
         <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-16 items-center">
-                <div class="flex items-center space-x-2">
-                    <div class="bg-blue-600 p-1.5 rounded-lg">
+            <div class="flex justify-between h-20 items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l9-5-9-5-9 5 9 5z" />
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 14l6.16-3.422a12.083 12.083 0 01.665 6.479A11.952 11.952 0 0012 20.055a11.952 11.952 0 00-6.824-2.998 12.078 12.078 0 01.665-6.479L12 14z" />
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
                         </svg>
                     </div>
-                    <span class="font-bold text-lg tracking-tight">理工升學決策導航</span>
+                    <div>
+                        <span class="font-extrabold text-xl tracking-tight block leading-none text-slate-900">STEM Navigator</span>
+                        <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-blue-600">理工升學策略導航</span>
+                    </div>
                 </div>
-                <div class="hidden md:flex space-x-6 text-sm font-medium">
-                    <a href="#major-analysis" class="text-slate-600 hover:text-blue-600 transition">學科考量</a>
-                    <a href="#region-guide" class="text-slate-600 hover:text-blue-600 transition">地區建議</a>
-                    <a href="#market-context" class="text-slate-600 hover:text-blue-600 transition">市場參考</a>
-                    <a href="#future-ready" class="text-slate-600 hover:text-blue-600 transition">未來裝備</a>
+                <div class="hidden lg:flex space-x-10 text-sm font-bold uppercase tracking-wide">
+                    <a href="#major-analysis" class="text-slate-500 hover:text-blue-600 transition">學科解析</a>
+                    <a href="#quiz" class="text-slate-500 hover:text-blue-600 transition">適合度自測</a>
+                    <a href="#region-matrix" class="text-slate-500 hover:text-blue-600 transition">地區對比</a>
+                    <a href="#future-roadmap" class="text-slate-500 hover:text-blue-600 transition">生涯規劃</a>
                 </div>
+                <button class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-lg text-sm font-bold transition shadow-md shadow-blue-600/20">
+                    聯絡諮詢
+                </button>
             </div>
         </div>
     </nav>
 
-    <!-- Hero Section: Focused on Educational Decision -->
-    <header class="gradient-bg text-white py-16 px-4">
-        <div class="max-w-5xl mx-auto">
-            <h1 class="text-3xl md:text-5xl font-extrabold mb-4 leading-tight">
-                理工學子升學路徑分析<br><span class="text-blue-400">從「選科」到「生涯建議」</span>
-            </h1>
-            <p class="text-slate-300 text-lg mb-8 max-w-2xl">
-                這不是一份經濟報告，而是專為理工科學生設計的決策模型。我們將產業趨勢轉化為實質的報考策略與技能建議。
-            </p>
-            <div class="flex flex-wrap gap-4">
-                <a href="#major-analysis" class="bg-blue-600 hover:bg-blue-700 px-6 py-2.5 rounded-lg font-bold transition flex items-center">
-                    查看各專業實質建議
-                    <svg class="w-4 h-4 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 9l-7 7-7-7"></path></svg>
-                </a>
+    <!-- Hero Section -->
+    <header class="hero-gradient text-white pt-24 pb-32 px-4 overflow-hidden relative">
+        <div class="absolute top-0 right-0 w-1/3 h-full bg-blue-500/10 blur-[120px] -rotate-45"></div>
+        <div class="max-w-7xl mx-auto relative z-10">
+            <div class="grid lg:grid-cols-2 gap-12 items-center">
+                <div class="animate-in fade-in slide-in-from-left duration-1000">
+                    <div class="inline-flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-blue-300 mb-6 border border-white/10">
+                        <span class="relative flex h-2 w-2">
+                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
+                            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
+                        </span>
+                        <span>2026/27 升學季度更新版</span>
+                    </div>
+                    <h1 class="text-5xl md:text-7xl font-extrabold mb-8 leading-[1.1]">
+                        不只是選科<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">更是設計未來</span>
+                    </h1>
+                    <p class="text-slate-300 text-lg mb-10 max-w-xl leading-relaxed">
+                        針對澳門「1+4」產業轉型背景，為 STEM 學生量身打造的深度升學決策模型。結合數據分析與實質行動建議，助你跨越學科鴻溝。
+                    </p>
+                    <div class="flex flex-wrap gap-5">
+                        <a href="#major-analysis" class="bg-white text-slate-900 px-8 py-4 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl">
+                            探索專業建議
+                        </a>
+                        <a href="#quiz" class="bg-slate-800 text-white border border-slate-700 px-8 py-4 rounded-xl font-bold transition-all hover:bg-slate-700">
+                            進行適合度測試
+                        </a>
+                    </div>
+                </div>
+                <div class="hidden lg:block relative animate-in fade-in zoom-in duration-1000">
+                    <div class="glass p-8 rounded-[2rem] border-white/20 shadow-2xl relative z-10">
+                        <div class="flex items-center justify-between mb-8">
+                            <h4 class="text-slate-900 font-extrabold italic">Market Insights</h4>
+                            <span class="text-xs text-slate-400 font-bold">LIVE DATA</span>
+                        </div>
+                        <div class="space-y-6">
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-bold text-slate-500">
+                                    <span>AI 技能重組需求</span>
+                                    <span>HIGH +78%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2">
+                                    <div class="bg-blue-600 h-2 rounded-full w-[78%]"></div>
+                                </div>
+                            </div>
+                            <div class="space-y-2">
+                                <div class="flex justify-between text-xs font-bold text-slate-500">
+                                    <span>跨學科能力溢價</span>
+                                    <span>MEDIUM +45%</span>
+                                </div>
+                                <div class="w-full bg-slate-200 rounded-full h-2">
+                                    <div class="bg-emerald-500 h-2 rounded-full w-[45%]"></div>
+                                </div>
+                            </div>
+                            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 mt-6">
+                                <p class="text-blue-900 text-xs font-bold mb-1">關鍵洞察：</p>
+                                <p class="text-blue-700 text-[11px] leading-relaxed">
+                                    澳門 1+4 政策正快速拉升「微電子」與「金融科技」職位需求。
+                                </p>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Decorative shapes -->
+                    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl"></div>
+                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl"></div>
+                </div>
             </div>
         </div>
     </header>
 
-    <!-- Section 1: Major Analysis (The core focus) -->
-    <section id="major-analysis" class="py-16 px-4 max-w-7xl mx-auto">
-        <div class="flex flex-col md:flex-row justify-between items-end mb-10 gap-4">
-            <div class="max-w-2xl">
-                <h2 class="text-3xl font-bold text-slate-800 mb-2">一、 FST 專業深度解析與具體建議</h2>
-                <p class="text-slate-500">針對各學組的特徵，提供最直接的選科考量與大學期間的準備建議。</p>
-            </div>
-            <div class="flex flex-wrap bg-slate-200 p-1 rounded-xl">
-                <button onclick="switchMajor('cs')" id="btn-cs" class="px-4 py-2 text-sm font-bold tab-active transition-all">電腦科學</button>
-                <button onclick="switchMajor('ece')" id="btn-ece" class="px-4 py-2 text-sm font-bold text-slate-600 transition-all">電子/系統</button>
-                <button onclick="switchMajor('eme')" id="btn-eme" class="px-4 py-2 text-sm font-bold text-slate-600 transition-all">機電/實作</button>
-                <button onclick="switchMajor('civil')" id="btn-civil" class="px-4 py-2 text-sm font-bold text-slate-600 transition-all">土木/基建</button>
-                <button onclick="switchMajor('apc')" id="btn-apc" class="px-4 py-2 text-sm font-bold text-slate-600 transition-all">理科科研</button>
-                <button onclick="switchMajor('math')" id="btn-math" class="px-4 py-2 text-sm font-bold text-slate-600 transition-all">數學/數據</button>
-            </div>
+    <!-- Section 1: Major Analysis -->
+    <section id="major-analysis" class="py-24 px-4 max-w-7xl mx-auto -mt-16 relative z-20">
+        <div class="glass p-2 rounded-2xl mb-12 flex flex-wrap gap-2 shadow-xl border-slate-200/50">
+            <button onclick="switchMajor('cs')" id="btn-cs" class="flex-1 py-4 text-sm font-bold tab-active transition-all">電腦科學</button>
+            <button onclick="switchMajor('ece')" id="btn-ece" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">電子/系統整合</button>
+            <button onclick="switchMajor('eme')" id="btn-eme" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">機電工程</button>
+            <button onclick="switchMajor('civil')" id="btn-civil" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">土木/基建</button>
+            <button onclick="switchMajor('apc')" id="btn-apc" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">科研/材料</button>
+            <button onclick="switchMajor('math')" id="btn-math" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">數學/數據</button>
         </div>
 
-        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
-            <!-- CS Content -->
-            <div id="m-cs" class="major-content p-8">
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2">
-                        <h3 class="text-2xl font-bold text-blue-600 mb-4">電腦科學 (Computer Science)</h3>
-                        <div class="prose text-slate-600 max-w-none mb-6">
+        <div id="major-display" class="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden min-h-[500px]">
+            <!-- Content will be injected by JS, but keeping initial CS for SEO/Loading -->
+            <div id="major-content-area" class="p-10 md:p-16">
+                <!-- CS Initial View -->
+                <div class="grid lg:grid-cols-2 gap-16 items-start">
+                    <div>
+                        <div class="flex items-center space-x-3 mb-6">
+                            <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded text-xs font-extrabold uppercase tracking-widest">Tech Focus</span>
+                            <span class="text-slate-400 text-xs font-bold italic">Computer Science</span>
+                        </div>
+                        <h3 class="text-4xl font-extrabold text-slate-900 mb-6">電腦科學與軟件工程</h3>
+                        <p class="text-slate-600 text-lg leading-relaxed mb-8">
                             這不僅是寫程式，更是學會如何用<strong>邏輯和演算法</strong>解決複雜問題。對於喜歡快速迭代、追求邏輯閉環的學生是首選。
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">選科考量：</h4>
-                                <p class="text-sm">數學能力是否強大？是否能忍受長時間面對代碼調試？若答案為是，CS 提供最高的職位靈活性。</p>
+                        </p>
+                        
+                        <div class="grid grid-cols-2 gap-6 mb-10">
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                                <h5 class="font-bold text-slate-900 mb-2">選科考量</h5>
+                                <p class="text-xs text-slate-500 leading-relaxed">數學能力是否強大？是否能忍受長時間面對代碼調試？若答案為是，CS 提供最高的職位靈活性。</p>
                             </div>
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">核心能力：</h4>
-                                <p class="text-sm">軟件架構設計、高效編碼、雲端佈署、算法優化。</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-blue-50 p-6 rounded-2xl">
-                        <h4 class="font-bold text-blue-800 mb-4">📍 實質建議：</h4>
-                        <div class="space-y-4">
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">大學一年級即開始在 GitHub 建立個人作品集，不要只依賴課堂作業。</p>
-                            </div>
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">建議考取雲端認證 (AWS/Azure)，這對畢業後進入大型博企科技部門極具優勢。</p>
-                            </div>
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-blue-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">參加開源項目，累積跨國遠程協作經驗。</p>
+                            <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                                <h5 class="font-bold text-slate-900 mb-2">薪酬天花板</h5>
+                                <p class="text-xs text-slate-500 leading-relaxed">在內地或香港，具備 AI 開發能力的高級工程師起薪點與成長空間極大。</p>
                             </div>
                         </div>
-                    </div>
-                </div>
-            </div>
 
-            <!-- ECE Content -->
-            <div id="m-ece" class="major-content p-8 hidden">
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2">
-                        <h3 class="text-2xl font-bold text-indigo-600 mb-4">電子及電腦工程 (ECE)</h3>
-                        <div class="prose text-slate-600 max-w-none mb-6">
-                            適合喜歡研究<strong>物聯網、芯片設計或智能控制</strong>的學生。它是溝通虛擬代碼與實體硬件的橋樑。
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">選科考量：</h4>
-                                <p class="text-sm">是否對物理電路與自動化感興趣？澳門目前正積極推動微電子研發，這是政策紅利區。</p>
-                            </div>
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">核心能力：</h4>
-                                <p class="text-sm">硬件設計、嵌入式開發、信號處理、物聯網整合。</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-indigo-50 p-6 rounded-2xl">
-                        <h4 class="font-bold text-indigo-800 mb-4">📍 實質建議：</h4>
                         <div class="space-y-4">
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">重點關注「微電子」方向，並爭取進入澳大模擬與混合信號超大規模集成電路國家重點實驗室實習。</p>
-                            </div>
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-indigo-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">熟練掌握 Python 與 C 語言，這在 AIOT 時代是必備的基本功。</p>
-                            </div>
+                            <h5 class="font-bold text-slate-900 flex items-center">
+                                <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                大學期間的實質行動：
+                            </h5>
+                            <ul class="space-y-3">
+                                <li class="flex items-start text-sm text-slate-600 bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
+                                    <span class="bg-blue-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center mr-3 mt-0.5 shrink-0">1</span>
+                                    <span><strong>Y1 即開始 GitHub：</strong> 不要只依賴課業。建立一個展示個人小工具或網頁的作品集，這是找實習的敲門磚。</span>
+                                </li>
+                                <li class="flex items-start text-sm text-slate-600 bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
+                                    <span class="bg-blue-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center mr-3 mt-0.5 shrink-0">2</span>
+                                    <span><strong>考取雲端認證：</strong> 建議考取 AWS 或 Azure 基礎認證，澳門博企科技部非常看重雲端佈署能力。</span>
+                                </li>
+                            </ul>
                         </div>
                     </div>
-                </div>
-            </div>
-
-            <!-- EME Content -->
-            <div id="m-eme" class="major-content p-8 hidden">
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2">
-                        <h3 class="text-2xl font-bold text-emerald-600 mb-4">機電工程 (Electromechanical)</h3>
-                        <div class="prose text-slate-600 max-w-none mb-6">
-                            適合喜歡<strong>工程維護、機器人或能源系統</strong>的學生。在澳門，大型建築與酒店的機電運維是長青需求。
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">選科考量：</h4>
-                                <p class="text-sm">是否喜歡動手實作？對機械結構是否有直覺？這是一個越老越吃香的穩定行業。</p>
+                    <div class="lg:sticky lg:top-24">
+                        <div class="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+                            <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 blur-3xl"></div>
+                            <h4 class="text-xl font-bold mb-6 flex items-center">
+                                <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                對標澳門就業路徑
+                            </h4>
+                            <div class="space-y-6">
+                                <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
+                                    <span class="text-sm font-medium">博企 IT 研發中心</span>
+                                    <span class="bg-emerald-500/20 text-emerald-400 text-[10px] font-bold px-2 py-1 rounded">高需求</span>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
+                                    <span class="text-sm font-medium">政務數字化工程師</span>
+                                    <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-1 rounded">中穩定</span>
+                                </div>
+                                <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
+                                    <span class="text-sm font-medium">本地 Fintech 公司</span>
+                                    <span class="bg-purple-500/20 text-purple-400 text-[10px] font-bold px-2 py-1 rounded">具潛力</span>
+                                </div>
                             </div>
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">核心能力：</h4>
-                                <p class="text-sm">機械製圖、熱力學應用、自動控制、能源效率管理。</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-emerald-50 p-6 rounded-2xl">
-                        <h4 class="font-bold text-emerald-800 mb-4">📍 實質建議：</h4>
-                        <div class="space-y-4">
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">學習進階 CAD/BIM 技術，這在現代大型工程中是標準配置。</p>
-                            </div>
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-emerald-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">了解可持續能源標準 (如 LEED)，這類跨學科知識能大幅提升就業競爭力。</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Civil Content -->
-            <div id="m-civil" class="major-content p-8 hidden">
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2">
-                        <h3 class="text-2xl font-bold text-orange-600 mb-4">土木工程 (Civil Engineering)</h3>
-                        <div class="prose text-slate-600 max-w-none mb-6">
-                            培養參與<strong>城市規劃、基建建設及施工管理</strong>的領軍人才。在公務員體系與大型建設公司中職位極重。
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">選科考量：</h4>
-                                <p class="text-sm">是否願意在工地環境工作？是否具備良好的溝通協調能力（應對供應商、法規部門）？</p>
-                            </div>
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">核心能力：</h4>
-                                <p class="text-sm">結構設計、岩土分析、施工項目管理、環境影響評估。</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-orange-50 p-6 rounded-2xl">
-                        <h4 class="font-bold text-orange-800 mb-4">📍 實質建議：</h4>
-                        <div class="space-y-4">
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">密切關注澳門特區政府公務員考試（工務局、市政署等）的學歷認可範圍。</p>
-                            </div>
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-orange-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">考取建築業安全主任等證照，畢業即具備核心上崗資格。</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- APC Content -->
-            <div id="m-apc" class="major-content p-8 hidden">
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2">
-                        <h3 class="text-2xl font-bold text-rose-600 mb-4">應用物理及化學 (APC)</h3>
-                        <div class="prose text-slate-600 max-w-none mb-6">
-                            適合目標在<strong>尖端研發、材料科學或環境科技</strong>的學生。這是進入半導體、生物醫藥上游的關鍵學科。
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">選科考量：</h4>
-                                <p class="text-sm">是否對科學現象的本質感興趣？是否打算繼續深造（碩博）？這是一門厚積薄發的學科。</p>
-                            </div>
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">核心能力：</h4>
-                                <p class="text-sm">微觀機理分析、現代光譜/色譜儀器操作、科學建模。</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-rose-50 p-6 rounded-2xl">
-                        <h4 class="font-bold text-rose-800 mb-4">📍 實質建議：</h4>
-                        <div class="space-y-4">
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">大學期間盡量申請進入導師的研究團隊擔任研究助理，這對申請海外名校碩博至關重要。</p>
-                            </div>
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-rose-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">關注「大健康」產業中的製藥工程方向。</p>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-
-            <!-- Math Content -->
-            <div id="m-math" class="major-content p-8 hidden">
-                <div class="grid lg:grid-cols-3 gap-8">
-                    <div class="lg:col-span-2">
-                        <h3 class="text-2xl font-bold text-cyan-600 mb-4">數學及統計 (Math & Data)</h3>
-                        <div class="prose text-slate-600 max-w-none mb-6">
-                            分為應用數學與統計數據科學兩條路徑。適合喜歡<strong>從海量數據中挖掘真相</strong>的邏輯型人才。
-                        </div>
-                        <div class="grid md:grid-cols-2 gap-4">
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">選科考量：</h4>
-                                <p class="text-sm">對數學理論是否有極高耐受力？對金融建模或數據科學是否有強烈熱忱？</p>
-                            </div>
-                            <div class="p-4 bg-slate-50 rounded-xl">
-                                <h4 class="font-bold text-slate-800 mb-2">核心能力：</h4>
-                                <p class="text-sm">統計推斷、數據挖掘、最優化方法、Bayesian 學習。</p>
-                            </div>
-                        </div>
-                    </div>
-                    <div class="bg-cyan-50 p-6 rounded-2xl">
-                        <h4 class="font-bold text-cyan-800 mb-4">📍 實質建議：</h4>
-                        <div class="space-y-4">
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">學習 Python/R 之外，務必修讀一些「金融」或「現代金融」相關課程，這對回澳進入銀行業非常有用。</p>
-                            </div>
-                            <div class="action-point">
-                                <svg class="w-5 h-5 text-cyan-600" fill="currentColor" viewBox="0 0 20 20"><path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clip-rule="evenodd"></path></svg>
-                                <p class="text-sm font-medium">參加數據科學競賽 (如 Kaggle)，累積實戰經驗。</p>
+                            <div class="mt-8 pt-8 border-t border-white/10">
+                                <p class="text-xs text-slate-400 leading-relaxed italic">
+                                    "建議在校期間選修『網絡安全』或『密碼學』，這在目前澳門金融合規化中屬於稀缺技能。"
+                                </p>
                             </div>
                         </div>
                     </div>
@@ -312,154 +233,454 @@
         </div>
     </section>
 
-    <!-- Section 2: Regional Guidance (Decision Guide) -->
-    <section id="region-guide" class="py-16 bg-white px-4">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold text-center mb-12">二、 地區升學指南：策略建議</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
-                <!-- Macau Advice -->
-                <div class="p-6 rounded-2xl border border-slate-200 hover:shadow-lg transition bg-blue-50/30">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-3">🇲🇴</span>
-                        <h3 class="text-xl font-bold">澳門：立足本地，網絡為王</h3>
+    <!-- Section 2: Interactive Quiz -->
+    <section id="quiz" class="py-24 bg-slate-900 relative overflow-hidden">
+        <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
+            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight italic">
+                三秒鐘定位：哪種理工專業更適合你？
+            </h2>
+            <p class="text-slate-400 mb-12">基於你的性格特徵與偏好進行初步篩選。</p>
+            
+            <div id="quiz-container" class="bg-white rounded-[2rem] p-8 md:p-12 shadow-2xl text-left">
+                <div id="quiz-question" class="mb-10">
+                    <span class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-2 block">Question 01</span>
+                    <h4 class="text-2xl font-bold text-slate-900 leading-tight">面對問題時，你更傾向於...</h4>
+                </div>
+                <div class="grid gap-4" id="quiz-options">
+                    <button onclick="nextQuiz(1)" class="w-full text-left p-6 rounded-2xl border-2 border-slate-100 hover:border-blue-600 hover:bg-blue-50 transition-all group">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700 group-hover:text-blue-700">在虛擬環境中，透過邏輯與代碼建立解決方案</span>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <button onclick="nextQuiz(2)" class="w-full text-left p-6 rounded-2xl border-2 border-slate-100 hover:border-blue-600 hover:bg-blue-50 transition-all group">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700 group-hover:text-blue-700">親手觸摸、拆解並優化實體的機械或電路系統</span>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                </div>
+            </div>
+        </div>
+        <!-- Background decorative icon -->
+        <div class="absolute top-1/2 left-10 -translate-y-1/2 opacity-10">
+            <svg class="w-96 h-96 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+        </div>
+    </section>
+
+    <!-- Section 3: Region Matrix -->
+    <section id="region-matrix" class="py-24 px-4 max-w-7xl mx-auto">
+        <div class="text-center mb-16">
+            <h2 class="text-4xl font-extrabold text-slate-900 mb-4 italic">升學地區策略對比</h2>
+            <p class="text-slate-500">不只是好壞，而是「適合度」與「資源分布」的權衡。</p>
+        </div>
+        
+        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
+            <!-- Macau -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+                    <span class="text-4xl">🇲🇴</span>
+                </div>
+                <h4 class="text-xl font-bold mb-6 text-blue-600">澳門 (Macau)</h4>
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
+                        <p class="text-sm text-slate-600 font-medium">人脈累積極快，本地政策保護，就業門檻低。</p>
                     </div>
-                    <div class="space-y-3 text-slate-600 text-sm">
-                        <p class="font-semibold text-blue-700">實質建議：</p>
-                        <ul class="list-disc list-inside space-y-2">
-                            <li><strong>人脈佈局：</strong>利用在地優勢，在大學期間多參與校友會、社團活動，提前建立專業社交圈。</li>
-                            <li><strong>證照對齊：</strong>直接針對澳門政府的專業登記制度進行考量（如土地工務局的技術員註冊）。</li>
-                            <li><strong>多元實習：</strong>爭取進入大型博企的 Back-office 技術實習項目，熟悉本地最大的就業市場環境。</li>
-                        </ul>
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
+                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
+                            「適合計劃留澳工作、想進公務員體系的人。務必參加大學各類社團，提前佈局人脈網。」
+                        </p>
                     </div>
                 </div>
-
-                <!-- Mainland Advice -->
-                <div class="p-6 rounded-2xl border border-slate-200 hover:shadow-lg transition bg-red-50/30">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-3">🇨🇳</span>
-                        <h3 class="text-xl font-bold">內地：降維打法，累積產業深度</h3>
+            </div>
+            <!-- Mainland -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+                    <span class="text-4xl">🇨🇳</span>
+                </div>
+                <h4 class="text-xl font-bold mb-6 text-red-600">內地 (Mainland)</h4>
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
+                        <p class="text-sm text-slate-600 font-medium">產業鏈完整，有全球最大的應用場景測試環境。</p>
                     </div>
-                    <div class="space-y-3 text-slate-600 text-sm">
-                        <p class="font-semibold text-red-700">實質建議：</p>
-                        <ul class="list-disc list-inside space-y-2">
-                            <li><strong>大廠實習：</strong>爭取在北京、深圳等一線城市的互聯網或高新科技大廠實習，累積「澳門無法提供」的大規模項目經驗。</li>
-                            <li><strong>學術資源：</strong>內地頂尖高校（如清北交複）的研究資源雄厚，若目標是科研，這裡提供極佳的跳板。</li>
-                            <li><strong>灣區紅利：</strong>關注「橫琴深合區」的就業補貼政策。</li>
-                        </ul>
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
+                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
+                            「目標研發或進大廠的首選。建議大二即開始應聘暑期實習，感受『快節奏』打法。」
+                        </p>
                     </div>
                 </div>
-
-                <!-- HK Advice -->
-                <div class="p-6 rounded-2xl border border-slate-200 hover:shadow-lg transition bg-emerald-50/30">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-3">🇭🇰</span>
-                        <h3 class="text-xl font-bold">香港：國際跳板，提升英語邊界</h3>
+            </div>
+            <!-- HK -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+                    <span class="text-4xl">🇭🇰</span>
+                </div>
+                <h4 class="text-xl font-bold mb-6 text-emerald-600">香港 (HK)</h4>
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
+                        <p class="text-sm text-slate-600 font-medium">國際化程度最高，產學研與海外接軌最直接。</p>
                     </div>
-                    <div class="space-y-3 text-slate-600 text-sm">
-                        <p class="font-semibold text-emerald-700">實質建議：</p>
-                        <ul class="list-disc list-inside space-y-2">
-                            <li><strong>全英訓練：</strong>在香港唸書最大的建議是「徹底融入全英環境」，這對於日後進入外資企業是核心資產。</li>
-                            <li><strong>跨國公司：</strong>多申請全球性的 Consulting 或 Tech 實習項目。</li>
-                            <li><strong>適應高壓：</strong>提前體驗香港的高效率節奏，對個人韌性是極大的磨練。</li>
-                        </ul>
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
+                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
+                            「對英語自信、想跳往歐美企業的人首選。務必積極考取國際專業證照。」
+                        </p>
                     </div>
                 </div>
-
-                <!-- Taiwan Advice -->
-                <div class="p-6 rounded-2xl border border-slate-200 hover:shadow-lg transition bg-slate-100/50">
-                    <div class="flex items-center mb-4">
-                        <span class="text-3xl mr-3">🇹🇼</span>
-                        <h3 class="text-xl font-bold">台灣：硬件核心，專注芯片與實作</h3>
+            </div>
+            <!-- Taiwan -->
+            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
+                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
+                    <span class="text-4xl">🇹🇼</span>
+                </div>
+                <h4 class="text-xl font-bold mb-6 text-slate-700">台灣 (Taiwan)</h4>
+                <div class="space-y-6">
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
+                        <p class="text-sm text-slate-600 font-medium">硬件、半導體教育底蘊極深，實習資源豐富。</p>
                     </div>
-                    <div class="space-y-3 text-slate-600 text-sm">
-                        <p class="font-semibold text-slate-700">實質建議：</p>
-                        <ul class="list-disc list-inside space-y-2">
-                            <li><strong>供應鏈視野：</strong>在台灣升學應重點關注半導體、硬件製造產業鏈。</li>
-                            <li><strong>就業認證：</strong>畢業回澳前，務必確認證照與學歷的認證流程（如高教局的學歷採認）。</li>
-                            <li><strong>實作優勢：</strong>利用台灣大學較多的動手實驗課程，補足理論之外的實務操作能力。</li>
-                        </ul>
+                    <div>
+                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
+                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
+                            「適合沉浸式研究硬件、電子設計的人。回澳前需確認學歷對接。」
+                        </p>
                     </div>
                 </div>
             </div>
         </div>
     </section>
 
-    <!-- Section 3: Market Context (As reference only) -->
-    <section id="market-context" class="py-16 bg-slate-900 text-white px-4">
-        <div class="max-w-7xl mx-auto">
-            <h2 class="text-3xl font-bold mb-8">三、 背景參考：市場與政策方向</h2>
-            <div class="grid lg:grid-cols-3 gap-8">
-                <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
-                    <h4 class="text-blue-400 font-bold mb-4">「1+4」適度多元</h4>
-                    <p class="text-sm text-slate-300">
-                        <strong>建議：</strong>選科時可參考大健康、金融、高新科技、會展這四條路線。這意味著未來 5-10 年政府資源將向這些領域傾斜，相關崗位的「穩定性」與「發展潛力」會相對較高。
-                    </p>
-                </div>
-                <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
-                    <h4 class="text-blue-400 font-bold mb-4">傳統主軸穩定性</h4>
-                    <p class="text-sm text-slate-300">
-                        <strong>建議：</strong>博彩業全職僱員仍逾 5.2 萬，顯示旅遊休閒核心仍是就業的安全網。理工生若不想從事研發，轉向博企的系統運維、數據分析是極佳的備案。
-                    </p>
-                </div>
-                <div class="bg-white/5 p-6 rounded-2xl border border-white/10">
-                    <h4 class="text-blue-400 font-bold mb-4">AI 與技能重組風險</h4>
-                    <p class="text-sm text-slate-300">
-                        <strong>建議：</strong>28% 的職業任務將自動化。升學選科應優先選擇「具備底層方法論」的學科，而非單純學習某種工具的操作，以應對技能更新常態。
-                    </p>
-                </div>
+    <!-- Section 4: Roadmap -->
+    <section id="future-roadmap" class="py-24 bg-white border-t border-slate-100 px-4">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-16">
+                <h2 class="text-4xl font-extrabold text-slate-900 mb-4 italic">生涯對衝路線圖</h2>
+                <p class="text-slate-500">即便選錯科，也要學會如何轉身。</p>
             </div>
-        </div>
-    </section>
-
-    <!-- Section 4: Future Ready (Action Plan) -->
-    <section id="future-ready" class="py-16 px-4 max-w-5xl mx-auto">
-        <h2 class="text-3xl font-bold text-center mb-10 italic">四、 大學期間的「避險」行動清單</h2>
-        <div class="space-y-4">
-            <div class="suggestion-card p-6 rounded-2xl">
-                <h4 class="font-bold text-lg mb-2">大學 Y1-Y2：築底期</h4>
-                <p class="text-slate-600 text-sm">除了刷 GPA，必須掌握至少一門通用程式語言（Python/Java）及基礎統計學。這是所有理工科通往 AI 時代的「門票」。</p>
-            </div>
-            <div class="suggestion-card p-6 rounded-2xl" style="border-left-color: #10b981;">
-                <h4 class="font-bold text-lg mb-2">大學 Y3：關鍵窗口期</h4>
-                <p class="text-slate-600 text-sm">至少完成一份超過 2 個月的「產業實習」。如果你想留澳，找博企或大行；如果你想去外面看，找大廠或國際諮詢公司。<strong>不要空著你的簡歷。</strong></p>
-            </div>
-            <div class="suggestion-card p-6 rounded-2xl" style="border-left-color: #f59e0b;">
-                <h4 class="font-bold text-lg mb-2">大學 Y4：對衝期</h4>
-                <p class="text-slate-600 text-sm">如果就業市場不好，提前準備海外研究生申請或內地推免。理工科的碩士學歷在專業崗位（如芯片設計、數據科學）是極硬的門檻。</p>
+            
+            <div class="relative">
+                <!-- Vertical Line -->
+                <div class="absolute left-1/2 -translate-x-1/2 h-full w-px bg-slate-200 hidden md:block"></div>
+                
+                <div class="space-y-12 relative z-10">
+                    <!-- Point 1 -->
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="md:w-1/2 md:text-right">
+                            <h4 class="font-extrabold text-blue-600 text-xl mb-2">大學 Y1-Y2：築底期</h4>
+                            <p class="text-sm text-slate-600">學好微積分與統計學。不管你是哪個專業，大數據分析能力是所有理工人的底色。<strong>這期間不要急著賺外快，專注 GPA。</strong></p>
+                        </div>
+                        <div class="w-10 h-10 bg-blue-600 rounded-full border-4 border-white shadow-lg shrink-0 z-20"></div>
+                        <div class="md:w-1/2"></div>
+                    </div>
+                    <!-- Point 2 -->
+                    <div class="flex flex-col md:flex-row-reverse items-center gap-8">
+                        <div class="md:w-1/2 text-left">
+                            <h4 class="font-extrabold text-emerald-600 text-xl mb-2">大學 Y3：關鍵窗口期</h4>
+                            <p class="text-sm text-slate-600">尋找第一份「高品質實習」。如果你覺得本專業不適合，這是跨行（如 CS 轉金融、機電轉數據）的最後最佳調整期。</p>
+                        </div>
+                        <div class="w-10 h-10 bg-emerald-500 rounded-full border-4 border-white shadow-lg shrink-0 z-20"></div>
+                        <div class="md:w-1/2"></div>
+                    </div>
+                    <!-- Point 3 -->
+                    <div class="flex flex-col md:flex-row items-center gap-8">
+                        <div class="md:w-1/2 md:text-right">
+                            <h4 class="font-extrabold text-slate-900 text-xl mb-2">大學 Y4：對衝期</h4>
+                            <p class="text-sm text-slate-600">準備考研或投遞大廠。若市場不景氣，深造（Master）是最佳的避風港，尤其是針對芯片設計或 AI 等門檻較高的崗位。</p>
+                        </div>
+                        <div class="w-10 h-10 bg-slate-900 rounded-full border-4 border-white shadow-lg shrink-0 z-20"></div>
+                        <div class="md:w-1/2"></div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
 
     <!-- Footer -->
-    <footer class="bg-white py-12 px-4 border-t border-slate-200">
-        <div class="max-w-7xl mx-auto text-center">
-            <p class="text-slate-500 font-bold mb-2">理工升學，不只是選科，更是選擇你與未來 AI 社會的相處方式。</p>
-            <p class="text-slate-400 text-xs">分析框架基於：澳大 FST 分流體系、OECD 自動化報告、WEF 未來就業報告。 &copy; 2025</p>
+    <footer class="bg-slate-900 text-white py-20 px-4">
+        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-12">
+            <div>
+                <div class="flex items-center space-x-3 mb-6">
+                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
+                        </svg>
+                    </div>
+                    <span class="font-extrabold text-lg tracking-tight">STEM Navigator</span>
+                </div>
+                <p class="text-slate-400 text-sm leading-relaxed">
+                    致力於透過數據與深度產業洞察，為新一代理工學子提供最務實的升學策略與決策支援。
+                </p>
+            </div>
+            <div class="md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-8">
+                <div>
+                    <h5 class="font-bold mb-4 text-slate-200">快速連結</h5>
+                    <ul class="space-y-2 text-sm text-slate-500">
+                        <li><a href="#major-analysis" class="hover:text-blue-400">學科深度解析</a></li>
+                        <li><a href="#quiz" class="hover:text-blue-400">適合度測評</a></li>
+                        <li><a href="#region-matrix" class="hover:text-blue-400">地區策略對比</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h5 class="font-bold mb-4 text-slate-200">決策資源</h5>
+                    <ul class="space-y-2 text-sm text-slate-500">
+                        <li><a href="#" class="hover:text-blue-400">1+4 產業報告</a></li>
+                        <li><a href="#" class="hover:text-blue-400">公務員報考指南</a></li>
+                        <li><a href="#" class="hover:text-blue-400">實習內推頻道</a></li>
+                    </ul>
+                </div>
+                <div class="col-span-2 md:col-span-1">
+                    <h5 class="font-bold mb-4 text-slate-200">免責聲明</h5>
+                    <p class="text-[10px] text-slate-600 leading-relaxed uppercase">
+                        本站內容僅供參考，不構成法律或正式教育建議。升學決策請結合個人實際情況及最新政策動向。
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="max-w-7xl mx-auto border-t border-white/5 mt-16 pt-8 text-center text-[10px] text-slate-600 font-bold uppercase tracking-widest">
+            &copy; 2026 STEM NAVIGATION SYSTEMS. ALL RIGHTS RESERVED.
         </div>
     </footer>
 
     <script>
-        function switchMajor(majorId) {
-            // Hide all major contents
-            document.querySelectorAll('.major-content').forEach(content => {
-                content.classList.add('hidden');
-            });
-            
-            // Show target
-            document.getElementById('m-' + majorId).classList.remove('hidden');
+        const majorData = {
+            cs: {
+                title: "電腦科學與軟件工程",
+                tag: "Tech Focus",
+                desc: "這不僅是寫程式，更是學會如何用邏輯和演算法解決複雜問題。對於喜歡快速迭代、追求邏輯閉環的學生是首選。",
+                consideration: "數學能力是否強大？是否能忍受長時間面對代碼調試？若答案為是，CS 提供最高的職位靈活性。",
+                salary: "在內地或香港，具備 AI 開發能力的高級工程師起薪點與成長空間極大。",
+                actions: [
+                    "<strong>Y1 即開始 GitHub：</strong> 不要只依賴課業。建立一個展示個人小工具或網頁的作品集，這是找實習的敲門磚。",
+                    "<strong>考取雲端認證：</strong> 建議考取 AWS 或 Azure 基礎認證，澳門博企科技部非常看重雲端佈署能力。"
+                ],
+                jobs: [
+                    { name: "博企 IT 研發中心", status: "高需求" },
+                    { name: "政務數字化工程師", status: "中穩定" },
+                    { name: "本地 Fintech 公司", status: "具潛力" }
+                ],
+                tip: "建議在校期間選修『網絡安全』或『密碼學』，這在目前澳門金融合規化中屬於稀缺技能。"
+            },
+            ece: {
+                title: "電子及電腦工程 (ECE)",
+                tag: "Hardware & IoT",
+                desc: "溝通虛擬代碼與實體硬件的橋樑。適合對芯片、物聯網、智能控制有濃厚興趣的學生。",
+                consideration: "是否對物理電路、信號處理感興趣？這是實現自動化與智能城市的核心技術。",
+                salary: "隨着大灣區芯片產業鏈發展，具備模擬IC或數字IC設計能力的畢業生起薪點極高。",
+                actions: [
+                    "<strong>進入重點實驗室：</strong> 爭取大二進入微電子相關實驗室，累積實操經驗。",
+                    "<strong>精通硬軟協同：</strong> 掌握 C 語言與 FPGA 開發，這是硬科技領域的鐵飯碗。"
+                ],
+                jobs: [
+                    { name: "集成電路設計商", status: "高增長" },
+                    { name: "智能酒店系統專家", status: "本地優勢" },
+                    { name: "醫療電子工程師", status: "大健康需求" }
+                ],
+                tip: "重點關注『模擬電路設計』，這是目前全球乃至澳門科研中最具競爭力的深水區。"
+            },
+            eme: {
+                title: "機電工程 (EME)",
+                tag: "Applied Engineering",
+                desc: "以工程訓練為核心。在澳門，大型酒店與基建設施的機電運維是永恆的剛性需求。",
+                consideration: "喜歡動手實作嗎？對機械結構有直覺嗎？這是一個技術經驗隨年齡增長的穩定職涯。",
+                salary: "初期穩定，後期具備專業工程師資格（如註冊機電工程師）後收益可觀。",
+                actions: [
+                    "<strong>學習 BIM 技術：</strong> 進階 CAD/BIM 在現代大型工程中是標配，必須熟練。",
+                    "<strong>考取安全證照：</strong> 大學期間了解工業安全主任等資格，增加就業砝碼。"
+                ],
+                jobs: [
+                    { name: "設施運營管理", status: "極穩定" },
+                    { name: "能源效率顧問", status: "政策紅利" },
+                    { name: "機器人系統工程師", status: "新趨勢" }
+                ],
+                tip: "了解 LEED 等綠色建築認證標準，這對進入大型地產或博企的設施部有很大幫助。"
+            },
+            civil: {
+                title: "土木與環境工程",
+                tag: "Infrastructure",
+                desc: "城市規劃與基建建設的核心力量。在公務員體系與大型顧問公司中具備極高話語權。",
+                consideration: "是否具備強大的溝通協調能力？是否能應對工地現場與複雜的法規環境？",
+                salary: "收入受政府預算與大型基建週期影響，但總體處於中上水平。",
+                actions: [
+                    "<strong>對齊公務員考試：</strong> 密切關注澳門工務部門的入職考評範圍。",
+                    "<strong>環境工程交叉：</strong> 隨着環保法規趨嚴，掌握環境影響評估技術將大受歡迎。"
+                ],
+                jobs: [
+                    { name: "公共部門技術員", status: "鐵飯碗" },
+                    { name: "結構工程師", status: "專業門檻" },
+                    { name: "環境影響評估師", status: "新需求" }
+                ],
+                tip: "在大四前完成相關的學歷採認與實習註冊手續，縮短入職等待期。"
+            },
+            apc: {
+                title: "應用物理與化學",
+                tag: "Pure R&D",
+                desc: "尖端研發與材料科學的搖籃。適合有志於深造、追求底層科學真理的科研型人才。",
+                consideration: "是否有耐心在實驗室進行長週期的研究？是否打算攻讀碩博學位？",
+                salary: "大學畢業起薪一般，但博士畢業進入高端研發機構後收入具備爆發性。",
+                actions: [
+                    "<strong>爭取研究助理：</strong> 盡早加入導師的論文發表計劃，這是申請名校的門票。",
+                    "<strong>掌握現代儀器：</strong> 精通色譜、光譜等昂貴分析儀器的操作與數據解析。"
+                ],
+                jobs: [
+                    { name: "新材料研發中心", status: "硬科技" },
+                    { name: "藥物質量檢測", status: "大健康政策" },
+                    { name: "環境監測科學家", status: "公共安全" }
+                ],
+                tip: "結合『數據分析』工具（如 Origin, Python），能讓你的科研數據更具說服力。"
+            },
+            math: {
+                title: "數學與數據科學",
+                tag: "Logical Engine",
+                desc: "分為應用數學與統計數據路徑。大數據時代的靈魂，是金融、AI、精算的底層支撐。",
+                consideration: "對純理論是否有極高耐受力？對數據中隱藏的規律是否有近乎偏執的探索欲？",
+                salary: "在金融業（精算、量化交易）與互聯網大數據崗位，收入水平屬於頂級。",
+                actions: [
+                    "<strong>參加數學競賽：</strong> 如 MCM/ICM 等建模大賽，累積實戰與名聲。",
+                    "<strong>跨修金融課程：</strong> 若想進銀行業，選修微觀經濟與金融工具能大幅增加成功率。"
+                ],
+                jobs: [
+                    { name: "銀行量化分析師", status: "高收入" },
+                    { name: "數據科學專家", status: "全業通吃" },
+                    { name: "精算師", status: "極高門檻" }
+                ],
+                tip: "不僅學數學，也要學會如何『講故事』，將複雜數據轉化為決策者聽得懂的商業洞察。"
+            }
+        };
 
-            // Reset tab styles
+        function switchMajor(id) {
+            const data = majorData[id];
+            const contentArea = document.getElementById('major-content-area');
+            
+            // Fade out
+            contentArea.classList.add('opacity-0');
+            
+            setTimeout(() => {
+                let jobsHtml = data.jobs.map(j => `
+                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
+                        <span class="text-sm font-medium">${j.name}</span>
+                        <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-1 rounded">${j.status}</span>
+                    </div>
+                `).join('');
+
+                let actionsHtml = data.actions.map((a, i) => `
+                    <li class="flex items-start text-sm text-slate-600 bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
+                        <span class="bg-blue-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center mr-3 mt-0.5 shrink-0">${i+1}</span>
+                        <span>${a}</span>
+                    </li>
+                `).join('');
+
+                contentArea.innerHTML = `
+                    <div class="grid lg:grid-cols-2 gap-16 items-start">
+                        <div class="animate-in fade-in slide-in-from-bottom duration-500">
+                            <div class="flex items-center space-x-3 mb-6">
+                                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded text-xs font-extrabold uppercase tracking-widest">${data.tag}</span>
+                                <span class="text-slate-400 text-xs font-bold italic">${id.toUpperCase()}</span>
+                            </div>
+                            <h3 class="text-4xl font-extrabold text-slate-900 mb-6">${data.title}</h3>
+                            <p class="text-slate-600 text-lg leading-relaxed mb-8">${data.desc}</p>
+                            
+                            <div class="grid grid-cols-2 gap-6 mb-10">
+                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                                    <h5 class="font-bold text-slate-900 mb-2">選科考量</h5>
+                                    <p class="text-xs text-slate-500 leading-relaxed">${data.consideration}</p>
+                                </div>
+                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
+                                    <h5 class="font-bold text-slate-900 mb-2">職位溢價</h5>
+                                    <p class="text-xs text-slate-500 leading-relaxed">${data.salary}</p>
+                                </div>
+                            </div>
+
+                            <div class="space-y-4">
+                                <h5 class="font-bold text-slate-900 flex items-center">
+                                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                                    大學期間的實質行動：
+                                </h5>
+                                <ul class="space-y-3">
+                                    ${actionsHtml}
+                                </ul>
+                            </div>
+                        </div>
+                        <div class="lg:sticky lg:top-24 animate-in fade-in slide-in-from-right duration-500">
+                            <div class="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 blur-3xl"></div>
+                                <h4 class="text-xl font-bold mb-6 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
+                                    市場落地與參考
+                                </h4>
+                                <div class="space-y-4">
+                                    ${jobsHtml}
+                                </div>
+                                <div class="mt-8 pt-8 border-t border-white/10">
+                                    <p class="text-xs text-slate-400 leading-relaxed italic">"${data.tip}"</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                
+                // Fade in
+                contentArea.classList.remove('opacity-0');
+            }, 300);
+
+            // Button update
             document.querySelectorAll('nav button, div button').forEach(btn => {
                 if (btn.id.startsWith('btn-')) {
                     btn.classList.remove('tab-active');
-                    btn.classList.add('text-slate-600');
+                    btn.classList.add('text-slate-500');
                 }
             });
-            
-            // Active style
-            const activeBtn = document.getElementById('btn-' + majorId);
-            activeBtn.classList.add('tab-active');
-            activeBtn.classList.remove('text-slate-600');
+            document.getElementById('btn-' + id).classList.add('tab-active');
+            document.getElementById('btn-' + id).classList.remove('text-slate-500');
+        }
+
+        let quizStep = 0;
+        function nextQuiz(choice) {
+            const container = document.getElementById('quiz-container');
+            const question = document.getElementById('quiz-question');
+            const options = document.getElementById('quiz-options');
+
+            if (quizStep === 0) {
+                quizStep = 1;
+                question.innerHTML = `
+                    <span class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-2 block">Question 02</span>
+                    <h4 class="text-2xl font-bold text-slate-900 leading-tight">你對未來的職業期望是...</h4>
+                `;
+                options.innerHTML = `
+                    <button onclick="nextQuiz(3)" class="w-full text-left p-6 rounded-2xl border-2 border-slate-100 hover:border-blue-600 hover:bg-blue-50 transition-all group">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700 group-hover:text-blue-700">追求高技術壁壘，成為領域內的專家或科學家</span>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                    <button onclick="nextQuiz(4)" class="w-full text-left p-6 rounded-2xl border-2 border-slate-100 hover:border-blue-600 hover:bg-blue-50 transition-all group">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700 group-hover:text-blue-700">追求行業穩定與實際產出，解決民生或基建問題</span>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                `;
+            } else {
+                container.innerHTML = `
+                    <div class="text-center py-10 animate-in fade-in zoom-in duration-700">
+                        <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-6">
+                            <svg class="w-10 h-10" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                        </div>
+                        <h4 class="text-3xl font-bold text-slate-900 mb-4">分析完成！</h4>
+                        <p class="text-slate-500 mb-8 max-w-sm mx-auto">
+                            根據你的偏好，你展現出明顯的「研發型技術傾向」。建議重點關注電腦科學 (CS) 或電子及電腦工程 (ECE)。
+                        </p>
+                        <div class="flex justify-center gap-4">
+                            <button onclick="location.reload()" class="text-sm font-bold text-blue-600">重新測試</button>
+                            <a href="#major-analysis" class="bg-blue-600 text-white px-6 py-2 rounded-lg text-sm font-bold">查看對應學科</a>
+                        </div>
+                    </div>
+                `;
+            }
         }
     </script>
 </body>
