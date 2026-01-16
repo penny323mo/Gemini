@@ -3,553 +3,458 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>理工升學決策導航 - 專業優化版</title>
+    <title>理工升學決策導航 - 專業測評版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
         :root {
             --primary: #2563eb;
             --primary-dark: #1e40af;
-            --accent: #fbbf24;
         }
         body {
             font-family: 'Plus Jakarta Sans', 'Noto Sans TC', sans-serif;
             scroll-behavior: smooth;
         }
-        .mesh-gradient {
-            background: radial-gradient(at 0% 0%, rgba(37, 99, 235, 0.1) 0, transparent 50%),
-                        radial-gradient(at 100% 100%, rgba(99, 102, 241, 0.1) 0, transparent 50%);
+        .hero-gradient {
+            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
         }
         .glass {
             background: rgba(255, 255, 255, 0.7);
             backdrop-filter: blur(12px);
             border: 1px solid rgba(255, 255, 255, 0.3);
         }
-        .hero-gradient {
-            background: linear-gradient(135deg, #0f172a 0%, #1e293b 100%);
+        .grade-btn.active {
+            background-color: #2563eb;
+            color: white;
+            border-color: #2563eb;
+        }
+        .view-section {
+            transition: opacity 0.4s ease-in-out, transform 0.4s ease-in-out;
         }
         .tab-active {
             background: white;
             color: var(--primary);
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
-        .card-anim {
-            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        .checklist-item input:checked + span {
+            text-decoration: line-through;
+            color: #94a3b8;
         }
-        .card-anim:hover {
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgb(0 0 0 / 0.1);
-        }
-        /* 自定義滾動條 */
-        ::-webkit-scrollbar { width: 8px; }
-        ::-webkit-scrollbar-track { background: #f1f1f1; }
-        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
-        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 mesh-gradient">
+<body class="bg-slate-50 text-slate-900">
 
-    <!-- Navigation -->
-    <nav class="sticky top-0 z-50 glass border-b border-slate-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between h-20 items-center">
-                <div class="flex items-center space-x-3">
-                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center shadow-lg shadow-blue-500/30">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <div>
-                        <span class="font-extrabold text-xl tracking-tight block leading-none text-slate-900">STEM Navigator</span>
-                        <span class="text-[10px] uppercase tracking-[0.2em] font-bold text-blue-600">理工升學策略導航</span>
-                    </div>
-                </div>
-                <div class="hidden lg:flex space-x-10 text-sm font-bold uppercase tracking-wide">
-                    <a href="#major-analysis" class="text-slate-500 hover:text-blue-600 transition">學科解析</a>
-                    <a href="#quiz" class="text-slate-500 hover:text-blue-600 transition">適合度自測</a>
-                    <a href="#region-matrix" class="text-slate-500 hover:text-blue-600 transition">地區對比</a>
-                    <a href="#future-roadmap" class="text-slate-500 hover:text-blue-600 transition">生涯規劃</a>
-                </div>
+    <!-- View 1: Quiz Landing (Initial View) -->
+    <section id="view-quiz" class="min-h-screen flex flex-col items-center justify-center p-4 hero-gradient relative overflow-hidden">
+        <div class="absolute top-0 left-0 w-full h-full opacity-10">
+            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                <path d="M0 0 L100 100 M100 0 L0 100" stroke="white" stroke-width="0.1" fill="none" />
+            </svg>
+        </div>
+
+        <div class="max-w-4xl w-full z-10 animate-in fade-in zoom-in duration-700">
+            <div class="text-center mb-10">
+                <div class="inline-block bg-blue-600/20 text-blue-400 px-4 py-1 rounded-full text-xs font-bold mb-4 border border-blue-500/30">STEM NAVIGATION SYSTEM</div>
+                <h1 class="text-4xl md:text-5xl font-extrabold text-white mb-4">開始你的理工升學測評</h1>
+                <p class="text-slate-400">系統將結合你的學業現狀與性格潛能，為你推薦最契合的專業路徑。</p>
             </div>
-        </div>
-    </nav>
 
-    <!-- Hero Section -->
-    <header class="hero-gradient text-white pt-24 pb-32 px-4 overflow-hidden relative">
-        <div class="absolute top-0 right-0 w-1/3 h-full bg-blue-500/10 blur-[120px] -rotate-45"></div>
-        <div class="max-w-7xl mx-auto relative z-10">
-            <div class="grid lg:grid-cols-2 gap-12 items-center">
-                <div class="animate-in fade-in slide-in-from-left duration-1000">
-                    <div class="inline-flex items-center space-x-2 bg-white/10 px-3 py-1 rounded-full text-xs font-bold text-blue-300 mb-6 border border-white/10">
-                        <span class="relative flex h-2 w-2">
-                            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-blue-400 opacity-75"></span>
-                            <span class="relative inline-flex rounded-full h-2 w-2 bg-blue-500"></span>
-                        </span>
-                        <span>2026/27 升學季度更新版</span>
-                    </div>
-                    <h1 class="text-5xl md:text-7xl font-extrabold mb-8 leading-[1.1]">
-                        不只是選科<br><span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">更是設計未來</span>
-                    </h1>
-                    <p class="text-slate-300 text-lg mb-10 max-w-xl leading-relaxed">
-                        針對澳門「1+4」產業轉型背景，為 STEM 學生量身打造的深度升學決策模型。結合數據分析與實質行動建議，助你跨越學科鴻溝。
-                    </p>
-                    <div class="flex flex-wrap gap-5">
-                        <a href="#major-analysis" class="bg-white text-slate-900 px-8 py-4 rounded-xl font-bold transition-all hover:scale-105 active:scale-95 shadow-xl">
-                            探索專業建議
-                        </a>
-                        <a href="#quiz" class="bg-slate-800 text-white border border-slate-700 px-8 py-4 rounded-xl font-bold transition-all hover:bg-slate-700">
-                            進行適合度測試
-                        </a>
-                    </div>
-                </div>
-                <div class="hidden lg:block relative animate-in fade-in zoom-in duration-1000">
-                    <div class="glass p-8 rounded-[2rem] border-white/20 shadow-2xl relative z-10">
-                        <div class="flex items-center justify-between mb-8">
-                            <h4 class="text-slate-900 font-extrabold italic">Market Insights</h4>
-                            <span class="text-xs text-slate-400 font-bold">LIVE DATA</span>
-                        </div>
-                        <div class="space-y-6">
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-xs font-bold text-slate-500">
-                                    <span>AI 技能重組需求</span>
-                                    <span>HIGH +78%</span>
-                                </div>
-                                <div class="w-full bg-slate-200 rounded-full h-2">
-                                    <div class="bg-blue-600 h-2 rounded-full w-[78%]"></div>
-                                </div>
-                            </div>
-                            <div class="space-y-2">
-                                <div class="flex justify-between text-xs font-bold text-slate-500">
-                                    <span>跨學科能力溢價</span>
-                                    <span>MEDIUM +45%</span>
-                                </div>
-                                <div class="w-full bg-slate-200 rounded-full h-2">
-                                    <div class="bg-emerald-500 h-2 rounded-full w-[45%]"></div>
-                                </div>
-                            </div>
-                            <div class="p-4 bg-blue-50 rounded-xl border border-blue-100 mt-6">
-                                <p class="text-blue-900 text-xs font-bold mb-1">關鍵洞察：</p>
-                                <p class="text-blue-700 text-[11px] leading-relaxed">
-                                    澳門 1+4 政策正快速拉升「微電子」與「金融科技」職位需求。
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-                    <!-- Decorative shapes -->
-                    <div class="absolute -bottom-10 -right-10 w-40 h-40 bg-emerald-500/20 rounded-full blur-3xl"></div>
-                    <div class="absolute -top-10 -left-10 w-40 h-40 bg-blue-600/20 rounded-full blur-3xl"></div>
-                </div>
-            </div>
-        </div>
-    </header>
-
-    <!-- Section 1: Major Analysis -->
-    <section id="major-analysis" class="py-24 px-4 max-w-7xl mx-auto -mt-16 relative z-20">
-        <div class="glass p-2 rounded-2xl mb-12 flex flex-wrap gap-2 shadow-xl border-slate-200/50">
-            <button onclick="switchMajor('cs')" id="btn-cs" class="flex-1 py-4 text-sm font-bold tab-active transition-all">電腦科學</button>
-            <button onclick="switchMajor('ece')" id="btn-ece" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">電子/系統整合</button>
-            <button onclick="switchMajor('eme')" id="btn-eme" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">機電工程</button>
-            <button onclick="switchMajor('civil')" id="btn-civil" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">土木/基建</button>
-            <button onclick="switchMajor('apc')" id="btn-apc" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">科研/材料</button>
-            <button onclick="switchMajor('math')" id="btn-math" class="flex-1 py-4 text-sm font-bold text-slate-500 hover:text-blue-600 transition-all">數學/數據</button>
-        </div>
-
-        <div id="major-display" class="bg-white rounded-[2.5rem] shadow-2xl border border-slate-100 overflow-hidden min-h-[500px]">
-            <div id="major-content-area" class="p-10 md:p-16">
-                <!-- Content will be injected by JS -->
-            </div>
-        </div>
-    </section>
-
-    <!-- Section 2: Enhanced Interactive Quiz -->
-    <section id="quiz" class="py-24 bg-slate-900 relative overflow-hidden">
-        <div class="max-w-4xl mx-auto px-4 relative z-10 text-center">
-            <h2 class="text-3xl md:text-5xl font-extrabold text-white mb-6 leading-tight italic">
-                理工潛力測評：找到你的天賦座標
-            </h2>
-            <p class="text-slate-400 mb-12">基於專業分析與職涯路徑設計，為你推薦最契合的理工專業。</p>
-            
-            <div id="quiz-container" class="bg-white rounded-[2rem] p-8 md:p-12 shadow-2xl text-left relative">
-                <!-- Progress Bar -->
+            <div id="quiz-card" class="bg-white rounded-[2.5rem] p-8 md:p-12 shadow-2xl relative">
                 <div class="absolute top-0 left-0 w-full h-1.5 bg-slate-100 rounded-t-2xl overflow-hidden">
-                    <div id="quiz-progress" class="h-full bg-blue-600 transition-all duration-500" style="width: 25%"></div>
+                    <div id="quiz-progress" class="h-full bg-blue-600 transition-all duration-500" style="width: 0%"></div>
                 </div>
 
-                <div id="quiz-step-content">
-                    <div id="quiz-question" class="mb-10 mt-4">
-                        <span id="quiz-step-label" class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-2 block">Question 01</span>
-                        <h4 id="quiz-text" class="text-2xl font-bold text-slate-900 leading-tight">面對一個複雜問題，你直覺的解決方式是？</h4>
+                <!-- Step 1: Grades -->
+                <div id="quiz-step-grades">
+                    <h3 class="text-2xl font-bold text-slate-800 mb-8">Step 01: 學科背景評估</h3>
+                    <div class="space-y-6">
+                        <div>
+                            <p class="text-sm font-bold text-slate-500 mb-3 uppercase tracking-widest">數學表現 (Math)</p>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="setGrade('math', 4, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">優秀 (90+)</button>
+                                <button onclick="setGrade('math', 3, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">良好 (75-89)</button>
+                                <button onclick="setGrade('math', 2, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">平均 (60-74)</button>
+                                <button onclick="setGrade('math', 1, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">需努力</button>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-500 mb-3 uppercase tracking-widest">物理表現 (Physics)</p>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="setGrade('phys', 4, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">優秀 (90+)</button>
+                                <button onclick="setGrade('phys', 3, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">良好 (75-89)</button>
+                                <button onclick="setGrade('phys', 2, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">平均 (60-74)</button>
+                                <button onclick="setGrade('phys', 1, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">需努力</button>
+                            </div>
+                        </div>
+                        <div>
+                            <p class="text-sm font-bold text-slate-500 mb-3 uppercase tracking-widest">英語表現 (English)</p>
+                            <div class="grid grid-cols-4 gap-2">
+                                <button onclick="setGrade('eng', 4, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">優秀 (90+)</button>
+                                <button onclick="setGrade('eng', 3, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">良好 (75-89)</button>
+                                <button onclick="setGrade('eng', 2, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">平均 (60-74)</button>
+                                <button onclick="setGrade('eng', 1, this)" class="grade-btn border-2 border-slate-100 py-3 rounded-xl text-xs font-bold hover:bg-slate-50 transition">需努力</button>
+                            </div>
+                        </div>
                     </div>
-                    <div class="grid gap-4" id="quiz-options">
-                        <!-- Options injected by JS -->
+                    <button id="next-to-personality" onclick="nextToPersonality()" class="w-full mt-10 bg-slate-200 text-slate-400 py-4 rounded-2xl font-bold cursor-not-allowed" disabled>請完成成績評估</button>
+                </div>
+
+                <!-- Step 2: Personality Questions -->
+                <div id="quiz-step-questions" class="hidden">
+                    <span id="q-step-label" class="text-blue-600 font-bold text-sm tracking-widest uppercase mb-2 block">Question 01</span>
+                    <h3 id="q-text" class="text-2xl font-bold text-slate-800 mb-8 leading-tight">面對一個複雜問題，你直覺的解決方式是？</h3>
+                    <div id="q-options" class="grid gap-4">
+                        <!-- Options injected via JS -->
                     </div>
                 </div>
             </div>
         </div>
-        <!-- Background decorative icon -->
-        <div class="absolute top-1/2 left-10 -translate-y-1/2 opacity-10">
-            <svg class="w-96 h-96 text-white" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"></path></svg>
+    </section>
+
+    <!-- View 2: Detailed Result Page (Hidden initially) -->
+    <section id="view-result" class="hidden py-20 px-4 bg-slate-50 min-h-screen">
+        <div class="max-w-5xl mx-auto">
+            <div class="text-center mb-12">
+                <span class="text-blue-600 font-extrabold text-sm uppercase tracking-widest">Personalized Report</span>
+                <h2 class="text-4xl font-extrabold text-slate-900 mt-2">測評結果與專業解析</h2>
+            </div>
+
+            <div id="result-detail-card" class="bg-white rounded-[3rem] shadow-2xl overflow-hidden border border-slate-100 mb-10">
+                <!-- Result Content Injected by JS -->
+            </div>
+
+            <div class="flex flex-col md:flex-row items-center justify-center gap-4">
+                <button onclick="showDashboard()" class="bg-slate-900 text-white px-8 py-4 rounded-2xl font-bold shadow-xl hover:bg-slate-800 transition-all flex items-center">
+                    進入全局儀表板 (解鎖地區對比與行動清單)
+                    <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
+                </button>
+                <button onclick="location.reload()" class="text-slate-500 font-bold hover:text-blue-600 transition">重新測評</button>
+            </div>
         </div>
     </section>
 
-    <!-- Section 3: Region Matrix -->
-    <section id="region-matrix" class="py-24 px-4 max-w-7xl mx-auto">
-        <div class="text-center mb-16">
-            <h2 class="text-4xl font-extrabold text-slate-900 mb-4 italic">升學地區策略對比</h2>
-            <p class="text-slate-500">不只是好壞，而是「適合度」與「資源分布」的權衡。</p>
+    <!-- View 3: Main Dashboard (Hidden initially) -->
+    <section id="view-dashboard" class="hidden">
+        <!-- Navigation -->
+        <nav class="sticky top-0 z-50 glass border-b border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex justify-between items-center">
+                <div class="flex items-center space-x-3">
+                    <div class="w-10 h-10 bg-blue-600 rounded-xl flex items-center justify-center text-white font-bold">SN</div>
+                    <span class="font-extrabold text-xl tracking-tight">STEM Navigator</span>
+                </div>
+                <div class="hidden md:flex space-x-8 text-sm font-bold text-slate-500">
+                    <a href="#major-analysis" class="hover:text-blue-600 transition">所有學科</a>
+                    <a href="#region-matrix" class="hover:text-blue-600 transition">地區對比</a>
+                    <a href="#action-center" class="hover:text-blue-600 transition">行動工具</a>
+                </div>
+            </div>
+        </nav>
+
+        <!-- Global Content -->
+        <div class="max-w-7xl mx-auto py-16 px-4">
+            <div id="major-analysis" class="mb-24">
+                <h2 class="text-3xl font-bold mb-8 text-center">探索其他學科類別</h2>
+                <div class="glass p-2 rounded-2xl mb-8 flex flex-wrap gap-2 shadow-sm">
+                    <button onclick="switchMajor('cs')" id="btn-cs" class="flex-1 py-4 text-sm font-bold transition-all text-slate-500">電腦科學</button>
+                    <button onclick="switchMajor('ece')" id="btn-ece" class="flex-1 py-4 text-sm font-bold transition-all text-slate-500">電子系統</button>
+                    <button onclick="switchMajor('eme')" id="btn-eme" class="flex-1 py-4 text-sm font-bold transition-all text-slate-500">機電工程</button>
+                    <button onclick="switchMajor('civil')" id="btn-civil" class="flex-1 py-4 text-sm font-bold transition-all text-slate-500">土木基建</button>
+                    <button onclick="switchMajor('apc')" id="btn-apc" class="flex-1 py-4 text-sm font-bold transition-all text-slate-500">科研材料</button>
+                    <button onclick="switchMajor('math')" id="btn-math" class="flex-1 py-4 text-sm font-bold transition-all text-slate-500">數學數據</button>
+                </div>
+                <div id="major-content-area" class="bg-white rounded-[2.5rem] p-10 shadow-sm border border-slate-100 min-h-[400px]">
+                    <!-- Major switch content -->
+                </div>
+            </div>
+
+            <div id="region-matrix" class="mb-24 scroll-mt-24">
+                <h2 class="text-3xl font-bold text-center mb-12">地區升學環境深度分析</h2>
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
+                    <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm"><h4 class="font-bold text-blue-600 mb-2">🇲🇴 澳門</h4><p class="text-xs text-slate-500">制度銜接成本最低，適合目標為本地公務員或大型博企管理層。強調在地社交與政策優勢。</p></div>
+                    <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm"><h4 class="font-bold text-red-600 mb-2">🇨🇳 內地</h4><p class="text-xs text-slate-500">產業鏈極深，適合研發型。北京/深圳提供頂尖規模工程實作環境。適合追求技術深度者。</p></div>
+                    <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm"><h4 class="font-bold text-emerald-600 mb-2">🇭🇰 香港</h4><p class="text-xs text-slate-500">國際化極高，全英環境。產學研與全球接軌直接。適合目標外資或跨國諮詢機構者。</p></div>
+                    <div class="p-6 bg-white rounded-2xl border border-slate-100 shadow-sm"><h4 class="font-bold text-slate-700 mb-2">🇹🇼 台灣</h4><p class="text-xs text-slate-500">硬件與半導體根基紮實。工科實習資源極佳。適合專注電子、電機、材料設計開發者。</p></div>
+                </div>
+            </div>
+
+            <div id="action-center" class="scroll-mt-24">
+                <div class="grid lg:grid-cols-2 gap-8 bg-slate-900 rounded-[3rem] p-12 text-white">
+                    <div>
+                        <h2 class="text-3xl font-bold mb-6 italic">升學行動追蹤清單</h2>
+                        <div class="space-y-4 text-slate-400">
+                            <label class="checklist-item flex items-center space-x-3 p-3 bg-white/5 rounded-xl"><input type="checkbox" class="w-5 h-5 rounded"><span class="text-sm">確認意向專業與對標地區 (Y1 暑假)</span></label>
+                            <label class="checklist-item flex items-center space-x-3 p-3 bg-white/5 rounded-xl"><input type="checkbox" class="w-5 h-5 rounded"><span class="text-sm">準備英語證明 (IELTS) 或 內地保送試</span></label>
+                            <label class="checklist-item flex items-center space-x-3 p-3 bg-white/5 rounded-xl"><input type="checkbox" class="w-5 h-5 rounded"><span class="text-sm">整理 GitHub 作品集 / 競賽獲獎證明</span></label>
+                            <label class="checklist-item flex items-center space-x-3 p-3 bg-white/5 rounded-xl"><input type="checkbox" class="w-5 h-5 rounded"><span class="text-sm">申請教青局獎學金 (關注指定學科名額)</span></label>
+                        </div>
+                    </div>
+                    <div class="bg-blue-600 p-8 rounded-[2rem]">
+                        <h4 class="text-xl font-bold mb-4">💡 專業建議</h4>
+                        <p class="text-sm text-blue-100 leading-relaxed italic mb-4">"理工科選校，地理位置往往比排名更重要。選擇擁有對標產業鏈的城市（如深圳的芯片、上海的醫藥），能讓你的實習資源贏在起跑線上。"</p>
+                        <hr class="border-blue-500 mb-4">
+                        <div class="text-xs space-y-2">
+                            <p>● 勞工局 (DSAL)：內地名企實習計劃</p>
+                            <p>● 人才發展委員會：查閱《緊缺人才目錄》</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
         
-        <div class="grid md:grid-cols-2 lg:grid-cols-4 gap-8">
-            <!-- Macau -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                    <span class="text-4xl">🇲🇴</span>
-                </div>
-                <h4 class="text-xl font-bold mb-6 text-blue-600">澳門 (Macau)</h4>
-                <div class="space-y-6">
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
-                        <p class="text-sm text-slate-600 font-medium">人脈累積極快，本地政策保護，就業門檻低。</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
-                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
-                            「適合計劃留澳工作、想進公務員體系的人。務必參加大學各類社團，提前佈局人脈網。」
-                        </p>
-                    </div>
-                </div>
+        <footer class="bg-white py-12 border-t border-slate-200">
+            <div class="max-w-7xl mx-auto px-4 text-center">
+                <p class="text-slate-400 text-xs font-bold uppercase tracking-widest">&copy; 2026 STEM NAVIGATION SYSTEM. ALL RIGHTS RESERVED.</p>
             </div>
-            <!-- Mainland -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                    <span class="text-4xl">🇨🇳</span>
-                </div>
-                <h4 class="text-xl font-bold mb-6 text-red-600">內地 (Mainland)</h4>
-                <div class="space-y-6">
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
-                        <p class="text-sm text-slate-600 font-medium">產業鏈完整，有全球最大的應用場景測試環境。</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
-                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
-                            「目標研發或進大廠的首選。建議大二即開始應聘暑期實習，感受『快節奏』打法。」
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- HK -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                    <span class="text-4xl">🇭🇰</span>
-                </div>
-                <h4 class="text-xl font-bold mb-6 text-emerald-600">香港 (HK)</h4>
-                <div class="space-y-6">
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
-                        <p class="text-sm text-slate-600 font-medium">國際化程度最高，產學研與海外接軌最直接。</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
-                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
-                            「對英語自信、想跳往歐美企業的人首選。務必積極考取國際專業證照。」
-                        </p>
-                    </div>
-                </div>
-            </div>
-            <!-- Taiwan -->
-            <div class="bg-white p-8 rounded-3xl shadow-sm border border-slate-100 card-anim relative group overflow-hidden">
-                <div class="absolute top-0 right-0 p-4 opacity-10 group-hover:opacity-100 transition-opacity">
-                    <span class="text-4xl">🇹🇼</span>
-                </div>
-                <h4 class="text-xl font-bold mb-6 text-slate-700">台灣 (Taiwan)</h4>
-                <div class="space-y-6">
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">優勢</span>
-                        <p class="text-sm text-slate-600 font-medium">硬件、半導體教育底蘊極深，實習資源豐富。</p>
-                    </div>
-                    <div>
-                        <span class="text-[10px] font-bold text-slate-400 uppercase tracking-widest block mb-2">關鍵建議</span>
-                        <p class="text-xs text-slate-500 bg-slate-50 p-3 rounded-xl italic">
-                            「適合沉浸式研究硬件、電子設計的人。回澳前需確認學歷對接。」
-                        </p>
-                    </div>
-                </div>
-            </div>
-        </div>
+        </footer>
     </section>
-
-    <!-- Section 4: Roadmap -->
-    <section id="future-roadmap" class="py-24 bg-white border-t border-slate-100 px-4">
-        <div class="max-w-5xl mx-auto">
-            <div class="text-center mb-16">
-                <h2 class="text-4xl font-extrabold text-slate-900 mb-4 italic">生涯對衝路線圖</h2>
-                <p class="text-slate-500">即便選錯科，也要學會如何轉身。</p>
-            </div>
-            
-            <div class="relative">
-                <!-- Vertical Line -->
-                <div class="absolute left-1/2 -translate-x-1/2 h-full w-px bg-slate-200 hidden md:block"></div>
-                
-                <div class="space-y-12 relative z-10">
-                    <!-- Point 1 -->
-                    <div class="flex flex-col md:flex-row items-center gap-8">
-                        <div class="md:w-1/2 md:text-right">
-                            <h4 class="font-extrabold text-blue-600 text-xl mb-2">大學 Y1-Y2：築底期</h4>
-                            <p class="text-sm text-slate-600">學好微積分與統計學。不管你是哪個專業，大數據分析能力是所有理工人的底色。<strong>這期間不要急著賺外快，專注 GPA。</strong></p>
-                        </div>
-                        <div class="w-10 h-10 bg-blue-600 rounded-full border-4 border-white shadow-lg shrink-0 z-20"></div>
-                        <div class="md:w-1/2"></div>
-                    </div>
-                    <!-- Point 2 -->
-                    <div class="flex flex-col md:flex-row-reverse items-center gap-8">
-                        <div class="md:w-1/2 text-left">
-                            <h4 class="font-extrabold text-emerald-600 text-xl mb-2">大學 Y3：關鍵窗口期</h4>
-                            <p class="text-sm text-slate-600">尋找第一份「高品質實習」。如果你覺得本專業不適合，這是跨行（如 CS 轉金融、機電轉數據）的最後最佳調整期。</p>
-                        </div>
-                        <div class="w-10 h-10 bg-emerald-500 rounded-full border-4 border-white shadow-lg shrink-0 z-20"></div>
-                        <div class="md:w-1/2"></div>
-                    </div>
-                    <!-- Point 3 -->
-                    <div class="flex flex-col md:flex-row items-center gap-8">
-                        <div class="md:w-1/2 md:text-right">
-                            <h4 class="font-extrabold text-slate-900 text-xl mb-2">大學 Y4：對衝期</h4>
-                            <p class="text-sm text-slate-600">準備考研或投遞大廠。若市場不景氣，深造（Master）是最佳的避風港，尤其是針對芯片設計或 AI 等門檻較高的崗位。</p>
-                        </div>
-                        <div class="w-10 h-10 bg-slate-900 rounded-full border-4 border-white shadow-lg shrink-0 z-20"></div>
-                        <div class="md:w-1/2"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <!-- Footer -->
-    <footer class="bg-slate-900 text-white py-20 px-4">
-        <div class="max-w-7xl mx-auto grid md:grid-cols-3 gap-12">
-            <div>
-                <div class="flex items-center space-x-3 mb-6">
-                    <div class="w-8 h-8 bg-blue-600 rounded-lg flex items-center justify-center">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z" />
-                        </svg>
-                    </div>
-                    <span class="font-extrabold text-lg tracking-tight">STEM Navigator</span>
-                </div>
-                <p class="text-slate-400 text-sm leading-relaxed">
-                    致力於透過數據與深度產業洞察，為新一代理工學子提供最務實的升學策略與決策支援。
-                </p>
-            </div>
-            <div class="md:col-span-2 grid grid-cols-2 md:grid-cols-3 gap-8">
-                <div>
-                    <h5 class="font-bold mb-4 text-slate-200">快速連結</h5>
-                    <ul class="space-y-2 text-sm text-slate-500">
-                        <li><a href="#major-analysis" class="hover:text-blue-400">學科深度解析</a></li>
-                        <li><a href="#quiz" class="hover:text-blue-400">適合度測評</a></li>
-                        <li><a href="#region-matrix" class="hover:text-blue-400">地區策略對比</a></li>
-                    </ul>
-                </div>
-                <div>
-                    <h5 class="font-bold mb-4 text-slate-200">決策資源</h5>
-                    <ul class="space-y-2 text-sm text-slate-500">
-                        <li><a href="#" class="hover:text-blue-400">1+4 產業報告</a></li>
-                        <li><a href="#" class="hover:text-blue-400">公務員報考指南</a></li>
-                        <li><a href="#" class="hover:text-blue-400">實習內推頻道</a></li>
-                    </ul>
-                </div>
-                <div class="col-span-2 md:col-span-1">
-                    <h5 class="font-bold mb-4 text-slate-200">免責聲明</h5>
-                    <p class="text-[10px] text-slate-600 leading-relaxed uppercase">
-                        本站內容僅供參考，不構成法律或正式教育建議。升學決策請結合個人實際情況及最新政策動向。
-                    </p>
-                </div>
-            </div>
-        </div>
-        <div class="max-w-7xl mx-auto border-t border-white/5 mt-16 pt-8 text-center text-[10px] text-slate-600 font-bold uppercase tracking-widest">
-            &copy; 2026 STEM NAVIGATION SYSTEMS. ALL RIGHTS RESERVED.
-        </div>
-    </footer>
 
     <script>
         const majorData = {
             cs: {
                 title: "電腦科學與軟件工程",
-                tag: "Tech Focus",
-                desc: "這不僅是寫程式，更是學會如何用邏輯和演算法解決複雜問題。對於喜歡快速迭代、追求邏輯閉環的學生是首選。",
-                consideration: "數學能力是否強大？是否能忍受長時間面對代碼調試？若答案為是，CS 提供最高的職位靈活性。",
-                salary: "在內地或香港，具備 AI 開發能力的高級工程師起薪點與成長空間極大。",
-                actions: [
-                    "<strong>Y1 即開始 GitHub：</strong> 不要只依賴課業。建立一個展示個人小工具或網頁的作品集，這是找實習的敲門磚。",
-                    "<strong>考取雲端認證：</strong> 建議考取 AWS 或 Azure 基礎認證，澳門博企科技部非常看重雲端佈署能力。"
-                ],
-                jobs: [
-                    { name: "博企 IT 研發中心", status: "高需求" },
-                    { name: "政務數字化工程師", status: "中穩定" },
-                    { name: "本地 Fintech 公司", status: "具潛力" }
-                ],
-                tip: "建議在校期間選修『網絡安全』或『密碼學』，這在目前澳門金融合規化中屬於稀缺技能。"
+                tag: "Tech Focus / AI",
+                fullDesc: "電腦科學是現代科技的底座。本學組致力於培養軟件開發與系統工程的高端人才，涵蓋 AI、網絡安全、分佈式系統及軟件架構。",
+                consideration: "需要極強的數學底子與邏輯。如果你享受將抽象思維轉化為可運行代碼的過程，這是你的首選。",
+                salary: "AI 與大數據方向在港澳及內地皆具備極高的薪酬溢價。",
+                actions: ["建立個人 GitHub 作品集","考取雲端認證 (AWS/Azure)","參加算法競賽 (LeetCode/ACM)"],
+                jobs: ["AI工程師", "全棧開發者", "數據架構師"],
+                macauPath: "博企數字化部門、金融機構 Fintech 團隊、橫琴跨境電商研發中心。"
             },
             ece: {
                 title: "電子及電腦工程 (ECE)",
-                tag: "Hardware & IoT",
-                desc: "溝通虛擬代碼與實體硬件的橋樑。適合對芯片、物聯網、智能控制有濃厚興趣的學生。",
-                consideration: "是否對物理電路、信號處理感興趣？這是實現自動化與智能城市的核心技術。",
-                salary: "隨着大灣區芯片產業鏈發展，具備模擬IC或數字IC設計能力的畢業生起薪點極高。",
-                actions: [
-                    "<strong>進入重點實驗室：</strong> 爭取大二進入微電子相關實驗室，累積實操經驗。",
-                    "<strong>精通硬軟協同：</strong> 掌握 C 語言與 FPGA 開發，這是硬科技領域的鐵飯碗。"
-                ],
-                jobs: [
-                    { name: "集成電路設計商", status: "高增長" },
-                    { name: "智能酒店系統專家", status: "本地優勢" },
-                    { name: "醫療電子工程師", status: "大健康需求" }
-                ],
-                tip: "重點關注『模擬電路設計』，這是目前全球乃至澳門科研中最具競爭力的深水區。"
+                tag: "Hardware & Systems",
+                fullDesc: "溝通虛擬代碼與實體硬件。專注於芯片設計 (VLSI)、物聯網 (IoT)、機器人控制及通訊系統。",
+                consideration: "對物理、信號處理感興趣。此學科是澳門重點發展的微電子產業核心。",
+                salary: "隨著芯片國產化加速，內地及大灣區對 ECE 人才需求暴漲。",
+                actions: ["熟練掌握 FPGA/C 語言","爭取進入國家重點實驗室實習","了解信號處理基本算法"],
+                jobs: ["IC設計師", "嵌入式開發員", "IoT專家"],
+                macauPath: "芯片設計公司、智能酒店系統商、政府通訊部門。"
             },
             eme: {
                 title: "機電工程 (EME)",
                 tag: "Applied Engineering",
-                desc: "以工程訓練為核心。在澳門，大型酒店與基建設施的機電運維是永恆的剛性需求。",
-                consideration: "喜歡動手實作嗎？對機械結構有直覺嗎？這是一個技術經驗隨年齡增長的穩定職涯。",
-                salary: "初期穩定，後期具備專業工程師資格（如註冊機電工程師）後收益可觀。",
-                actions: [
-                    "<strong>學習 BIM 技術：</strong> 進階 CAD/BIM 在現代大型工程中是標配，必須熟練。",
-                    "<strong>考取安全證照：</strong> 大學期間了解工業安全主任等資格，增加就業砝碼。"
-                ],
-                jobs: [
-                    { name: "設施運營管理", status: "極穩定" },
-                    { name: "能源效率顧問", status: "政策紅利" },
-                    { name: "機器人系統工程師", status: "新趨勢" }
-                ],
-                tip: "了解 LEED 等綠色建築認證標準，這對進入大型地產或博企的設施部有很大幫助。"
+                fullDesc: "研究機械結構與電氣控制的融合。在澳門，大型酒店與基建設施的機電運維是永恆的剛性需求。",
+                consideration: "喜歡動手操作、研究物理機械結構。這是一個實踐性極強且穩定的專業。",
+                salary: "初期穩定，具備專業註冊工程師資格後收入可觀。",
+                actions: ["熟練掌握 BIM/CAD 建模","學習能源管理標準 (LEED)","考取工業安全主任資格"],
+                jobs: ["設施運籌員", "能源監測師", "機械工程師"],
+                macauPath: "酒店設施部、公共交通基建、能源管理諮詢公司。"
             },
             civil: {
                 title: "土木與環境工程",
                 tag: "Infrastructure",
-                desc: "城市規劃與基建建設的核心力量。在公務員體系與大型顧問公司中具備極高話語權。",
-                consideration: "是否具備強大的溝通協調能力？是否能應對工地現場與複雜的法規環境？",
-                salary: "收入受政府預算與大型基建週期影響，但總體處於中上水平。",
-                actions: [
-                    "<strong>對齊公務員考試：</strong> 密切關注澳門工務部門的入職考評範圍。",
-                    "<strong>環境工程交叉：</strong> 隨着環保法規趨嚴，掌握環境影響評估技術將大受歡迎。"
-                ],
-                jobs: [
-                    { name: "公共部門技術員", status: "鐵飯碗" },
-                    { name: "結構工程師", status: "專業門檻" },
-                    { name: "環境影響評估師", status: "新需求" }
-                ],
-                tip: "在大四前完成相關的學歷採認與實習註冊手續，縮短入職等待期。"
+                fullDesc: "涉及城市規劃、結構設計、岩土工程及施工管理。是城市擴張與維護的領航者。",
+                consideration: "具備良好的溝通能力、願意在工地與現場工作、能處理複雜的法規與環境評估。",
+                salary: "公務員體系與大型顧問公司起薪穩定且高。",
+                actions: ["考取公職技術員註冊","關注環境工程交叉學科","熟悉澳門建築法規"],
+                jobs: ["結構師", "工料測量師", "施工經理"],
+                macauPath: "工務局技術官、市政署工程員、大型承建商項目部。"
             },
             apc: {
                 title: "應用物理與化學",
-                tag: "Pure R&D",
-                desc: "尖端研發與材料科學的搖籃。適合有志於深造、追求底層科學真理的科研型人才。",
-                consideration: "是否有耐心在實驗室進行長週期的研究？是否打算攻讀碩博學位？",
-                salary: "大學畢業起薪一般，但博士畢業進入高端研發機構後收入具備爆發性。",
-                actions: [
-                    "<strong>爭取研究助理：</strong> 盡早加入導師的論文發表計劃，這是申請名校的門票。",
-                    "<strong>掌握現代儀器：</strong> 精通色譜、光譜等昂貴分析儀器的操作與數據解析。"
-                ],
-                jobs: [
-                    { name: "新材料研發中心", status: "硬科技" },
-                    { name: "藥物質量檢測", status: "大健康政策" },
-                    { name: "環境監測科學家", status: "公共安全" }
-                ],
-                tip: "結合『數據分析』工具（如 Origin, Python），能讓你的科研數據更具說服力。"
+                tag: "Advanced R&D",
+                fullDesc: "探索物質底層機理，應用於新材料、新能源、生物醫藥等領域。是科技進步的源頭。",
+                consideration: "對科學真理有強烈好奇心。準備好進行長週期的實驗與深造（碩博）。",
+                salary: "研發崗位溢價高，尤其是材料與藥物開發方向。",
+                actions: ["盡早加入導師研究室","掌握高端精密儀器操作","學習科學建模工具"],
+                jobs: ["研發科學家", "質量控制專家", "環境監測師"],
+                macauPath: "藥廠研發中心、大健康產業實驗室、材料分析顧問。"
             },
             math: {
                 title: "數學與數據科學",
-                tag: "Logical Engine",
-                desc: "分為應用數學與統計數據路徑。大數據時代的靈魂，是金融、AI、精算的底層支撐。",
-                consideration: "對純理論是否有極高耐受力？對數據中隱藏的規律是否有近乎偏執的探索欲？",
-                salary: "在金融業（精算、量化交易）與互聯網大數據崗位，收入水平屬於頂級。",
-                actions: [
-                    "<strong>參加數學競賽：</strong> 如 MCM/ICM 等建模大賽，累積實戰與名聲。",
-                    "<strong>跨修金融課程：</strong> 若想進銀行業，選修微觀經濟與金融工具能大幅增加成功率。"
-                ],
-                jobs: [
-                    { name: "銀行量化分析師", status: "高收入" },
-                    { name: "數據科學專家", status: "全業通吃" },
-                    { name: "精算師", status: "極高門檻" }
-                ],
-                tip: "不僅學數學，也要學會如何『講故事』，將複雜數據轉化為決策者聽得懂的商業洞察。"
+                tag: "Logic Engine",
+                fullDesc: "數據時代的「大腦」。涵蓋統計推斷、數據挖掘、量化分析及最優化。是金融與 AI 的地基。",
+                consideration: "極高的純理論耐受度。如果你喜歡在數字中尋找模式與規律，這裡能讓你通吃多個行業。",
+                salary: "量化分析與精算師的收入上限極高。",
+                actions: ["學習 Python/R 數據分析","參加數學建模大賽 (MCM)","選修金融工具課程"],
+                jobs: ["量化分析師", "精算師", "大數據科學家"],
+                macauPath: "銀行風險管理、量化金融機構、數據諮詢大廠。"
             }
         };
+
+        // Quiz State
+        let userGrades = { math: 0, phys: 0, eng: 0 };
+        let quizScores = { logic: 0, physical: 0, micro: 0, macro: 0, research: 0, apply: 0 };
+        let currentQuizStep = 0;
+
+        const quizQuestions = [
+            { text: "面對一個複雜問題，你直覺的解決方式是？", options: [{ text: "建立抽象模型或寫代碼自動解決", score: { logic: 2, micro: 1 } }, { text: "拆解實體組件，透過動手操作解決", score: { physical: 2, apply: 1 } }] },
+            { text: "在科技展覽中，最能吸引你駐足的是？", options: [{ text: "芯片架構或高效演算法展示", score: { micro: 2, logic: 1 } }, { text: "震撼的橋樑結構、火箭引擎或能源系統", score: { macro: 2, apply: 1 } }] },
+            { text: "你更傾向於在哪種環境下工作？", options: [{ text: "安靜的辦公室，專注於研究與設計", score: { research: 2, micro: 1 } }, { text: "變化的工地現場，協調各項工程實施", score: { apply: 2, macro: 1 } }] },
+            { text: "你希望你的工作成果主要影響哪個領域？", options: [{ text: "數位世界：金融、AI、信息安全", score: { logic: 2, research: 1 } }, { text: "物質世界：基建、硬件、能源環保", score: { physical: 2, macro: 1 } }] }
+        ];
+
+        function setGrade(subject, score, btn) {
+            userGrades[subject] = score;
+            const parent = btn.parentElement;
+            parent.querySelectorAll('.grade-btn').forEach(b => b.classList.remove('active'));
+            btn.classList.add('active');
+            
+            if (userGrades.math > 0 && userGrades.phys > 0 && userGrades.eng > 0) {
+                const nextBtn = document.getElementById('next-to-personality');
+                nextBtn.classList.remove('bg-slate-200', 'text-slate-400', 'cursor-not-allowed');
+                nextBtn.classList.add('bg-blue-600', 'text-white');
+                nextBtn.disabled = false;
+                nextBtn.innerText = "開始性格測評";
+            }
+        }
+
+        function nextToPersonality() {
+            document.getElementById('quiz-step-grades').classList.add('hidden');
+            document.getElementById('quiz-step-questions').classList.remove('hidden');
+            renderQuestion();
+        }
+
+        function renderQuestion() {
+            const stepLabel = document.getElementById('q-step-label');
+            const qText = document.getElementById('q-text');
+            const qOptions = document.getElementById('q-options');
+            const progressBar = document.getElementById('quiz-progress');
+
+            if (currentQuizStep < quizQuestions.length) {
+                const q = quizQuestions[currentQuizStep];
+                stepLabel.innerText = `Question 0${currentQuizStep + 1}`;
+                qText.innerText = q.text;
+                progressBar.style.width = `${((currentQuizStep + 1) / quizQuestions.length) * 100}%`;
+                
+                qOptions.innerHTML = q.options.map((opt, idx) => `
+                    <button onclick="handleAnswer(${idx})" class="w-full text-left p-6 rounded-2xl border-2 border-slate-100 hover:border-blue-600 hover:bg-blue-50 transition group">
+                        <div class="flex items-center justify-between">
+                            <span class="font-bold text-slate-700 group-hover:text-blue-700">${opt.text}</span>
+                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
+                        </div>
+                    </button>
+                `).join('');
+            } else {
+                calculateResult();
+            }
+        }
+
+        function handleAnswer(idx) {
+            const scores = quizQuestions[currentQuizStep].options[idx].score;
+            for (let key in scores) quizScores[key] += scores[key];
+            currentQuizStep++;
+            renderQuestion();
+        }
+
+        function calculateResult() {
+            let resultKey = "cs";
+            // Logic combination: Grade + Score
+            if (quizScores.logic > quizScores.physical) {
+                if (userGrades.math >= 3) {
+                    resultKey = (quizScores.research > quizScores.apply) ? "math" : "cs";
+                } else {
+                    resultKey = "cs";
+                }
+            } else {
+                if (userGrades.phys >= 3) {
+                    resultKey = (quizScores.macro > quizScores.micro) ? "civil" : "ece";
+                } else {
+                    resultKey = "eme";
+                }
+            }
+            showResultView(resultKey);
+        }
+
+        function showResultView(key) {
+            const data = majorData[key];
+            const resultCard = document.getElementById('result-detail-card');
+            
+            resultCard.innerHTML = `
+                <div class="p-10 md:p-16">
+                    <div class="grid lg:grid-cols-2 gap-16">
+                        <div>
+                            <div class="inline-flex items-center space-x-2 bg-blue-100 text-blue-600 px-3 py-1 rounded-full text-[10px] font-extrabold uppercase tracking-widest mb-6">Recommended Choice</div>
+                            <h3 class="text-4xl font-extrabold text-slate-900 mb-4">${data.title}</h3>
+                            <p class="text-blue-600 font-bold mb-6 italic">「${data.tag}」</p>
+                            <p class="text-slate-600 text-lg leading-relaxed mb-10">${data.fullDesc}</p>
+                            
+                            <div class="space-y-6">
+                                <div class="bg-slate-50 p-6 rounded-2xl">
+                                    <h5 class="font-bold text-slate-800 mb-2">選科考量</h5>
+                                    <p class="text-sm text-slate-500">${data.consideration}</p>
+                                </div>
+                                <div class="bg-slate-50 p-6 rounded-2xl">
+                                    <h5 class="font-bold text-slate-800 mb-2">薪酬與發展</h5>
+                                    <p class="text-sm text-slate-500">${data.salary}</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="space-y-8">
+                            <div class="bg-slate-900 text-white p-8 rounded-[2rem] shadow-xl relative overflow-hidden">
+                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/10 blur-3xl"></div>
+                                <h4 class="text-xl font-bold mb-6 flex items-center">大學實質建議 (Action Plans)</h4>
+                                <ul class="space-y-4">
+                                    ${data.actions.map((a, i) => `<li class="flex items-start text-sm text-slate-300"><span class="w-5 h-5 bg-blue-600 text-white text-[10px] rounded-full flex items-center justify-center mr-3 mt-0.5 shrink-0">${i+1}</span>${a}</li>`).join('')}
+                                </ul>
+                            </div>
+                            
+                            <div class="p-8 border-2 border-blue-50 bg-blue-50/20 rounded-[2rem]">
+                                <h4 class="font-bold text-slate-800 mb-4 flex items-center">
+                                    <svg class="w-6 h-6 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" /><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" /></svg>
+                                    澳門落地路徑
+                                </h4>
+                                <p class="text-sm text-slate-600 leading-relaxed mb-4">${data.macauPath}</p>
+                                <div class="flex flex-wrap gap-2">
+                                    ${data.jobs.map(j => `<span class="bg-white border border-blue-100 text-blue-600 px-3 py-1 rounded-full text-xs font-bold">${j}</span>`).join('')}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+
+            // Switch view
+            document.getElementById('view-quiz').classList.add('hidden');
+            document.getElementById('view-result').classList.remove('hidden');
+            window.scrollTo(0, 0);
+            
+            // Set dashboard initial major
+            switchMajor(key);
+        }
+
+        function showDashboard() {
+            document.getElementById('view-result').classList.add('hidden');
+            document.getElementById('view-dashboard').classList.remove('hidden');
+            window.scrollTo(0, 0);
+        }
 
         function switchMajor(id) {
             const data = majorData[id];
             const contentArea = document.getElementById('major-content-area');
             
             contentArea.classList.add('opacity-0');
-            
             setTimeout(() => {
-                let jobsHtml = data.jobs.map(j => `
-                    <div class="flex items-center justify-between p-4 bg-white/5 rounded-2xl border border-white/10">
-                        <span class="text-sm font-medium">${j.name}</span>
-                        <span class="bg-blue-500/20 text-blue-400 text-[10px] font-bold px-2 py-1 rounded">${j.status}</span>
-                    </div>
-                `).join('');
-
-                let actionsHtml = data.actions.map((a, i) => `
-                    <li class="flex items-start text-sm text-slate-600 bg-blue-50/50 p-3 rounded-xl border border-blue-100/50">
-                        <span class="bg-blue-600 text-white text-[10px] w-5 h-5 rounded-full flex items-center justify-center mr-3 mt-0.5 shrink-0">${i+1}</span>
-                        <span>${a}</span>
-                    </li>
-                `).join('');
-
                 contentArea.innerHTML = `
-                    <div class="grid lg:grid-cols-2 gap-16 items-start">
-                        <div class="animate-in fade-in slide-in-from-bottom duration-500">
-                            <div class="flex items-center space-x-3 mb-6">
-                                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded text-xs font-extrabold uppercase tracking-widest">${data.tag}</span>
-                                <span class="text-slate-400 text-xs font-bold italic">${id.toUpperCase()}</span>
+                    <div class="grid md:grid-cols-2 gap-12">
+                        <div>
+                            <div class="flex items-center space-x-2 mb-4">
+                                <span class="bg-blue-100 text-blue-600 px-3 py-1 rounded-md text-xs font-bold uppercase">${data.tag}</span>
+                                <span class="text-slate-400 text-xs font-bold">ID: ${id.toUpperCase()}</span>
                             </div>
-                            <h3 class="text-4xl font-extrabold text-slate-900 mb-6">${data.title}</h3>
-                            <p class="text-slate-600 text-lg leading-relaxed mb-8">${data.desc}</p>
-                            
-                            <div class="grid grid-cols-2 gap-6 mb-10">
-                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                                    <h5 class="font-bold text-slate-900 mb-2">選科考量</h5>
-                                    <p class="text-xs text-slate-500 leading-relaxed">${data.consideration}</p>
-                                </div>
-                                <div class="p-5 rounded-2xl bg-slate-50 border border-slate-100">
-                                    <h5 class="font-bold text-slate-900 mb-2">職位溢價</h5>
-                                    <p class="text-xs text-slate-500 leading-relaxed">${data.salary}</p>
-                                </div>
-                            </div>
-
+                            <h3 class="text-3xl font-extrabold text-slate-900 mb-6">${data.title}</h3>
+                            <p class="text-slate-600 mb-8">${data.fullDesc}</p>
                             <div class="space-y-4">
-                                <h5 class="font-bold text-slate-900 flex items-center">
-                                    <svg class="w-5 h-5 mr-2 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7l5 5m0 0l-5 5m5-5H6"></path></svg>
-                                    大學期間的實質行動：
-                                </h5>
-                                <ul class="space-y-3">
-                                    ${actionsHtml}
-                                </ul>
+                                <p class="text-sm font-bold text-slate-800">對標職位：</p>
+                                <div class="flex flex-wrap gap-2">
+                                    ${data.jobs.map(j => `<span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-lg text-xs font-bold">${j}</span>`).join('')}
+                                </div>
                             </div>
                         </div>
-                        <div class="lg:sticky lg:top-24 animate-in fade-in slide-in-from-right duration-500">
-                            <div class="bg-slate-900 rounded-3xl p-8 text-white shadow-2xl relative overflow-hidden">
-                                <div class="absolute top-0 right-0 w-32 h-32 bg-blue-500/20 blur-3xl"></div>
-                                <h4 class="text-xl font-bold mb-6 flex items-center">
-                                    <svg class="w-6 h-6 mr-2 text-blue-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z" /></svg>
-                                    市場落地與參考
-                                </h4>
-                                <div class="space-y-4">
-                                    ${jobsHtml}
-                                </div>
-                                <div class="mt-8 pt-8 border-t border-white/10">
-                                    <p class="text-xs text-slate-400 leading-relaxed italic">"${data.tip}"</p>
-                                </div>
-                            </div>
+                        <div class="bg-slate-50 p-8 rounded-[2rem] border border-slate-100">
+                            <h4 class="font-bold mb-4">具體建議路徑</h4>
+                            <p class="text-sm text-slate-500 mb-6">${data.macauPath}</p>
+                            <ul class="space-y-3">
+                                ${data.actions.map(a => `<li class="text-xs text-slate-600 flex items-start"><svg class="w-4 h-4 mr-2 text-blue-600 shrink-0" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>${a}</li>`).join('')}
+                            </ul>
                         </div>
                     </div>
                 `;
-                
                 contentArea.classList.remove('opacity-0');
             }, 300);
 
-            document.querySelectorAll('nav button, div button').forEach(btn => {
+            document.querySelectorAll('#major-analysis button').forEach(btn => {
                 if (btn.id && btn.id.startsWith('btn-')) {
                     btn.classList.remove('tab-active');
                     btn.classList.add('text-slate-500');
@@ -561,136 +466,6 @@
                 activeBtn.classList.remove('text-slate-500');
             }
         }
-
-        // --- Quiz System ---
-        let currentQuizStep = 0;
-        let quizScores = { logic: 0, physical: 0, micro: 0, macro: 0, research: 0, apply: 0 };
-
-        const quizQuestions = [
-            {
-                text: "面對一個複雜問題，你直覺的解決方式是？",
-                options: [
-                    { text: "建立抽象模型或寫一段代碼來自動化解決", score: { logic: 2, micro: 1 } },
-                    { text: "拆解實體組件，透過動手操作或調整硬件解決", score: { physical: 2, apply: 1 } }
-                ]
-            },
-            {
-                text: "在科技展覽中，最能吸引你駐足的是？",
-                options: [
-                    { text: "精密的芯片架構或高效的演算法展示", score: { micro: 2, logic: 1 } },
-                    { text: "震撼的橋樑結構、火箭引擎或能源系統", score: { macro: 2, apply: 1 } }
-                ]
-            },
-            {
-                text: "你更傾向於在哪種環境下工作？",
-                options: [
-                    { text: "實驗室或安靜的辦公室，專注於深度研究與設計", score: { research: 2, micro: 1 } },
-                    { text: "變化的工地現場或工廠，協調各項工程實施", score: { apply: 2, macro: 1 } }
-                ]
-            },
-            {
-                text: "你希望你的工作成果主要影響哪個領域？",
-                options: [
-                    { text: "數位世界：金融交易、AI、信息安全", score: { logic: 2, research: 1 } },
-                    { text: "物質世界：城市基建、智能硬件、能源環保", score: { physical: 2, macro: 1 } }
-                ]
-            }
-        ];
-
-        function renderQuiz() {
-            const stepContent = document.getElementById('quiz-step-content');
-            const stepLabel = document.getElementById('quiz-step-label');
-            const questionText = document.getElementById('quiz-text');
-            const optionsContainer = document.getElementById('quiz-options');
-            const progressBar = document.getElementById('quiz-progress');
-
-            if (currentQuizStep < quizQuestions.length) {
-                const q = quizQuestions[currentQuizStep];
-                stepLabel.innerText = `Question 0${currentQuizStep + 1}`;
-                questionText.innerText = q.text;
-                progressBar.style.width = `${((currentQuizStep + 1) / quizQuestions.length) * 100}%`;
-
-                optionsContainer.innerHTML = q.options.map((opt, idx) => `
-                    <button onclick="handleQuizAnswer(${idx})" class="w-full text-left p-6 rounded-2xl border-2 border-slate-100 hover:border-blue-600 hover:bg-blue-50 transition-all group">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-slate-700 group-hover:text-blue-700">${opt.text}</span>
-                            <svg class="w-5 h-5 text-slate-300 group-hover:text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5l7 7-7 7"></path></svg>
-                        </div>
-                    </button>
-                `).join('');
-            } else {
-                showQuizResult();
-            }
-        }
-
-        function handleQuizAnswer(optionIdx) {
-            const scores = quizQuestions[currentQuizStep].options[optionIdx].score;
-            for (let key in scores) {
-                quizScores[key] += scores[key];
-            }
-            currentQuizStep++;
-            renderQuiz();
-        }
-
-        function showQuizResult() {
-            const container = document.getElementById('quiz-container');
-            let resultMajor = "cs"; // Default
-            let resultReason = "";
-
-            // Simple logic for recommendation
-            if (quizScores.logic > quizScores.physical) {
-                if (quizScores.research > quizScores.apply) {
-                    resultMajor = "math";
-                    resultReason = "你擁有強大的邏輯與統計直覺，適合在數據深海中尋找真相。";
-                } else {
-                    resultMajor = "cs";
-                    resultReason = "你傾向於透過虛擬邏輯解決問題，具備頂尖軟件開發的潛力。";
-                }
-            } else {
-                if (quizScores.macro > quizScores.micro) {
-                    resultMajor = "civil";
-                    resultReason = "你對大型基建與社會運作有濃厚興趣，適合構築城市未來。";
-                } else if (quizScores.apply > quizScores.research) {
-                    resultMajor = "eme";
-                    resultReason = "你喜歡實踐與機械結構，適合在機電系統中發揮所長。";
-                } else {
-                    resultMajor = "ece";
-                    resultReason = "你處於硬軟交界，對物聯網與智能系統具備極佳的適應力。";
-                }
-            }
-
-            const data = majorData[resultMajor];
-
-            container.innerHTML = `
-                <div class="text-center py-6 animate-in fade-in zoom-in duration-700">
-                    <div class="w-24 h-24 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-8 shadow-inner">
-                        <svg class="w-12 h-12" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
-                    </div>
-                    <h4 class="text-3xl font-extrabold text-slate-900 mb-4 tracking-tight">分析報告：你的最佳契合專業</h4>
-                    <p class="text-slate-500 mb-10 max-w-lg mx-auto leading-relaxed">
-                        根據測評維度顯示：<span class="text-blue-600 font-bold">${resultReason}</span>
-                    </p>
-                    
-                    <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 mb-8 inline-block text-left w-full">
-                        <div class="flex items-center justify-between mb-2">
-                            <span class="text-xs font-bold text-slate-400 uppercase tracking-widest italic">推薦專業</span>
-                            <span class="text-blue-600 font-bold text-xs">MATCH: 95%</span>
-                        </div>
-                        <h5 class="text-xl font-bold text-slate-800">${data.title}</h5>
-                    </div>
-
-                    <div class="flex flex-wrap justify-center gap-4">
-                        <button onclick="location.reload()" class="px-6 py-3 rounded-xl border border-slate-200 text-sm font-bold text-slate-600 hover:bg-slate-50">重新測試</button>
-                        <a href="#major-analysis" onclick="switchMajor('${resultMajor}')" class="bg-blue-600 text-white px-10 py-3 rounded-xl text-sm font-bold shadow-lg shadow-blue-600/20 hover:scale-105 transition-transform">查看專業建議</a>
-                    </div>
-                </div>
-            `;
-        }
-
-        document.addEventListener('DOMContentLoaded', () => {
-            switchMajor('cs');
-            renderQuiz();
-        });
     </script>
 </body>
 </html>
