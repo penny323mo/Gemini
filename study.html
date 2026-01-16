@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>理工升學決策導航 - 深色主題與精準測評版</title>
+    <title>理工升學決策導航 - 專業測評版</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;600;700&family=Noto+Sans+TC:wght@300;400;700&display=swap" rel="stylesheet">
     <style>
@@ -33,13 +33,14 @@
             background: rgba(255, 255, 255, 0.05);
             border: 1px solid rgba(255, 255, 255, 0.1);
             color: #94a3b8;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
         }
         .grade-btn.active {
             background-color: var(--primary-dark);
             color: white;
             border-color: var(--primary);
             box-shadow: 0 0 20px rgba(37, 99, 235, 0.4);
-            transform: scale(1.05);
+            transform: translateY(-2px) scale(1.02);
         }
         .tab-active {
             background: rgba(59, 130, 246, 0.2);
@@ -47,15 +48,12 @@
             border: 1px solid rgba(59, 130, 246, 0.5);
             box-shadow: 0 0 15px rgba(59, 130, 246, 0.2);
         }
-        .chart-bar {
-            transition: height 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        .view-section {
+            animation: slideIn 0.6s cubic-bezier(0.16, 1, 0.3, 1);
         }
-        .floating {
-            animation: floating 8s ease-in-out infinite;
-        }
-        @keyframes floating {
-            0%, 100% { transform: translateY(0px); }
-            50% { transform: translateY(-15px); }
+        @keyframes slideIn {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
         }
         .option-btn {
             background: rgba(255, 255, 255, 0.03);
@@ -67,83 +65,77 @@
             border-color: var(--primary);
             transform: translateX(10px);
         }
+        .chart-bar {
+            transition: height 1.5s cubic-bezier(0.34, 1.56, 0.64, 1);
+        }
     </style>
 </head>
-<body class="hero-gradient min-h-screen">
+<body class="hero-gradient min-h-screen overflow-x-hidden">
 
-    <!-- View 1: Quiz Landing (Updated with 8 steps) -->
-    <section id="view-quiz" class="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
-        <div class="absolute top-0 left-0 w-full h-full opacity-20 pointer-events-none">
-            <svg class="w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
-                <defs><pattern id="grid" width="10" height="10" patternUnits="userSpaceOnUse"><path d="M 10 0 L 0 0 0 10" fill="none" stroke="white" stroke-width="0.1"/></pattern></defs>
-                <rect width="100" height="100" fill="url(#grid)" />
-            </svg>
-        </div>
-
-        <div class="max-w-4xl w-full z-10">
+    <!-- View 1: Quiz Landing & Grades -->
+    <section id="view-quiz" class="min-h-screen flex flex-col items-center justify-center p-4 relative">
+        <div class="max-w-4xl w-full z-10 view-section">
             <div class="text-center mb-10">
                 <div class="inline-flex items-center space-x-2 bg-blue-500/10 text-blue-400 px-4 py-1 rounded-full text-[10px] font-extrabold mb-6 border border-blue-500/20 tracking-[0.2em] shadow-lg">
-                    STEM NAVIGATOR PRO V4.0
+                    STEM NAVIGATOR PRO
                 </div>
-                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tighter">探索你的<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">科學基因</span></h1>
-                <p class="text-slate-400 text-lg max-w-2xl mx-auto">我們將透過 8 個生活化維度，結合你的學科表現，為你精準解鎖最匹配的理工專業路徑。</p>
+                <h1 class="text-4xl md:text-6xl font-extrabold text-white mb-6 tracking-tighter italic">解鎖你的<span class="text-transparent bg-clip-text bg-gradient-to-r from-blue-400 to-emerald-400">理工基因</span></h1>
+                <p class="text-slate-400 text-lg max-w-2xl mx-auto">透過 8 個維度與學業表現，精準定位你的最佳升學專業。</p>
             </div>
 
             <div id="quiz-card" class="glass-card rounded-[3rem] p-8 md:p-12 shadow-2xl relative">
-                <div class="absolute top-0 left-0 w-full h-1.5 bg-white/5 rounded-t-3xl overflow-hidden">
-                    <div id="quiz-progress" class="h-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all duration-700" style="width: 0%"></div>
+                <div class="absolute top-0 left-0 w-full h-2 bg-white/5 rounded-t-3xl overflow-hidden">
+                    <div id="quiz-progress" class="h-full bg-gradient-to-r from-blue-600 to-emerald-500 transition-all duration-700 shadow-lg" style="width: 0%"></div>
                 </div>
 
-                <!-- Step 1: Grade Input -->
-                <div id="quiz-step-grades" class="space-y-8 animate-in fade-in duration-500">
-                    <div class="flex items-center justify-between mb-2">
-                        <h3 class="text-2xl font-bold text-white tracking-tight">Step 01: 學科基礎分析</h3>
-                        <span class="text-slate-500 text-xs font-bold uppercase">Background check</span>
+                <!-- Step 1: Grade Selection -->
+                <div id="quiz-step-grades" class="space-y-8">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="text-2xl font-bold text-white tracking-tight">Step 01: 學科背景評估</h3>
+                        <span class="text-slate-500 text-xs font-bold uppercase">Academic Check</span>
                     </div>
                     <div class="space-y-8">
                         <div>
-                            <p class="text-xs font-bold text-blue-400 mb-4 uppercase tracking-widest flex items-center"><span class="w-1.5 h-1.5 bg-blue-400 rounded-full mr-2"></span> 數學表現 (Math)</p>
+                            <p class="text-xs font-bold text-blue-400 mb-4 uppercase tracking-widest flex items-center"><span class="w-2 h-2 bg-blue-400 rounded-full mr-3 animate-pulse"></span> 數學表現 (Math)</p>
                             <div class="grid grid-cols-4 gap-3">
-                                <button onclick="setGrade('math', 4, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">優秀</button>
-                                <button onclick="setGrade('math', 3, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">良好</button>
-                                <button onclick="setGrade('math', 2, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">平均</button>
-                                <button onclick="setGrade('math', 1, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">需努力</button>
+                                <button onclick="setGrade('math', 4, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">優秀</button>
+                                <button onclick="setGrade('math', 3, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">良好</button>
+                                <button onclick="setGrade('math', 2, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">平均</button>
+                                <button onclick="setGrade('math', 1, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">需努力</button>
                             </div>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-emerald-400 mb-4 uppercase tracking-widest flex items-center"><span class="w-1.5 h-1.5 bg-emerald-400 rounded-full mr-2"></span> 物理表現 (Physics)</p>
+                            <p class="text-xs font-bold text-emerald-400 mb-4 uppercase tracking-widest flex items-center"><span class="w-2 h-2 bg-emerald-400 rounded-full mr-3 animate-pulse"></span> 物理表現 (Physics)</p>
                             <div class="grid grid-cols-4 gap-3">
-                                <button onclick="setGrade('phys', 4, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">優秀</button>
-                                <button onclick="setGrade('phys', 3, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">良好</button>
-                                <button onclick="setGrade('phys', 2, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">平均</button>
-                                <button onclick="setGrade('phys', 1, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">需努力</button>
+                                <button onclick="setGrade('phys', 4, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">優秀</button>
+                                <button onclick="setGrade('phys', 3, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">良好</button>
+                                <button onclick="setGrade('phys', 2, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">平均</button>
+                                <button onclick="setGrade('phys', 1, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">需努力</button>
                             </div>
                         </div>
                         <div>
-                            <p class="text-xs font-bold text-indigo-400 mb-4 uppercase tracking-widest flex items-center"><span class="w-1.5 h-1.5 bg-indigo-400 rounded-full mr-2"></span> 英語表現 (English)</p>
+                            <p class="text-xs font-bold text-indigo-400 mb-4 uppercase tracking-widest flex items-center"><span class="w-2 h-2 bg-indigo-400 rounded-full mr-3 animate-pulse"></span> 英語表現 (English)</p>
                             <div class="grid grid-cols-4 gap-3">
-                                <button onclick="setGrade('eng', 4, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">優秀</button>
-                                <button onclick="setGrade('eng', 3, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">良好</button>
-                                <button onclick="setGrade('eng', 2, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">平均</button>
-                                <button onclick="setGrade('eng', 1, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold transition-all">需努力</button>
+                                <button onclick="setGrade('eng', 4, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">優秀</button>
+                                <button onclick="setGrade('eng', 3, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">良好</button>
+                                <button onclick="setGrade('eng', 2, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">平均</button>
+                                <button onclick="setGrade('eng', 1, this)" class="grade-btn py-4 rounded-2xl text-xs font-extrabold">需努力</button>
                             </div>
                         </div>
                     </div>
-                    <button id="next-to-personality" onclick="nextToPersonality()" class="w-full mt-6 bg-slate-800 text-slate-500 py-5 rounded-3xl font-extrabold cursor-not-allowed transition-all" disabled>完成背景分析後開啟測評</button>
+                    <button id="next-to-personality" onclick="nextToPersonality()" class="w-full mt-6 bg-slate-800 text-slate-500 py-5 rounded-3xl font-extrabold cursor-not-allowed transition-all" disabled>完成成績輸入後開始測評</button>
                 </div>
 
                 <!-- Step 2: Personality Questions -->
                 <div id="quiz-step-questions" class="hidden animate-in fade-in slide-in-from-right duration-500">
                     <div class="flex justify-between items-center mb-8">
                         <span id="q-step-label" class="text-blue-400 font-extrabold text-sm uppercase tracking-[0.3em] border-l-4 border-blue-500 pl-4">Assessment Q1/8</span>
-                        <div class="h-1 w-32 bg-white/5 rounded-full overflow-hidden">
-                            <div id="q-mini-progress" class="h-full bg-blue-500 transition-all" style="width: 12.5%"></div>
+                        <div class="h-1.5 w-32 bg-white/5 rounded-full overflow-hidden">
+                            <div id="q-mini-progress" class="h-full bg-blue-500 transition-all duration-500" style="width: 12.5%"></div>
                         </div>
                     </div>
-                    <h3 id="q-text" class="text-2xl md:text-3xl font-bold text-white mb-10 leading-tight">題目加載中...</h3>
-                    <div id="q-options" class="grid gap-4">
-                        <!-- Options injected via JS -->
-                    </div>
+                    <h3 id="q-text" class="text-2xl md:text-3xl font-bold text-white mb-10 leading-tight"></h3>
+                    <div id="q-options" class="grid gap-4"></div>
                 </div>
             </div>
         </div>
@@ -151,191 +143,114 @@
 
     <!-- View 2: Detailed Result Page -->
     <section id="view-result" class="hidden py-24 px-4 min-h-screen">
-        <div class="max-w-5xl mx-auto">
+        <div class="max-w-6xl mx-auto">
             <div class="text-center mb-16">
-                <span class="text-emerald-400 font-extrabold text-xs uppercase tracking-[0.4em] mb-4 block">Assessment Completed</span>
-                <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tighter">你的專屬<span class="text-blue-400">升學策略報告</span></h2>
+                <span class="text-emerald-400 font-extrabold text-xs uppercase tracking-[0.4em] mb-4 block">Match Confirmed</span>
+                <h2 class="text-4xl md:text-6xl font-extrabold text-white tracking-tighter italic">你的專屬<span class="text-blue-400">升學戰略報告</span></h2>
             </div>
-
-            <div id="result-detail-card" class="glass-card rounded-[4rem] shadow-2xl overflow-hidden mb-12 border-white/5">
-                <!-- Result Content Injected by JS -->
-            </div>
-
+            <div id="result-detail-card" class="glass-card rounded-[4rem] shadow-2xl overflow-hidden mb-12 border-white/5"></div>
             <div class="flex flex-col md:flex-row items-center justify-center gap-6">
-                <button onclick="showDashboard()" class="bg-blue-600 text-white px-12 py-5 rounded-2xl font-extrabold shadow-xl hover:bg-blue-500 transition-all hover:scale-105 active:scale-95 flex items-center group">
+                <button onclick="showDashboard()" class="bg-blue-600 text-white px-12 py-5 rounded-3xl font-extrabold shadow-xl hover:bg-blue-500 transition-all hover:scale-105 active:scale-95 flex items-center group">
                     解鎖全局儀表板
-                    <svg class="w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
+                    <svg class="w-5 h-5 ml-3 group-hover:translate-x-2 transition-transform" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 8l4 4m0 0l-4 4m4-4H3"></path></svg>
                 </button>
-                <button onclick="location.reload()" class="text-slate-400 font-bold hover:text-white transition-all flex items-center">
-                    <svg class="w-4 h-4 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 4v5h.582m15.356 2A8.001 8.001 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8.003 8.003 0 01-15.357-2m15.357 2H15"></path></svg>
-                    重新評估
-                </button>
+                <button onclick="location.reload()" class="text-slate-400 font-bold hover:text-white transition-all">重新評估</button>
             </div>
         </div>
     </section>
 
-    <!-- View 3: Main Dashboard -->
+    <!-- View 3: Dashboard -->
     <section id="view-dashboard" class="hidden">
         <nav class="sticky top-0 z-50 glass-card border-b border-white/5 h-24">
             <div class="max-w-7xl mx-auto px-6 h-full flex justify-between items-center">
                 <div class="flex items-center space-x-4 cursor-pointer" onclick="location.reload()">
-                    <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-extrabold text-xl shadow-lg shadow-blue-500/20">SN</div>
+                    <div class="w-12 h-12 bg-blue-600 rounded-2xl flex items-center justify-center text-white font-extrabold text-xl shadow-lg">SN</div>
                     <span class="font-extrabold text-xl text-white tracking-tighter italic">STEM Navigator</span>
                 </div>
                 <div class="hidden lg:flex space-x-12 text-[10px] font-extrabold uppercase tracking-[0.3em] text-slate-400">
-                    <a href="#market-trends" class="hover:text-blue-400 transition-all">數據趨勢</a>
-                    <a href="#major-analysis" class="hover:text-blue-400 transition-all">學科深度圖譜</a>
+                    <a href="#market-trends" class="hover:text-blue-400 transition-all">產業趨勢</a>
+                    <a href="#major-analysis" class="hover:text-blue-400 transition-all">學科詳解</a>
                     <a href="#region-matrix" class="hover:text-blue-400 transition-all">地區對比</a>
                 </div>
             </div>
         </nav>
 
         <div class="max-w-7xl mx-auto py-24 px-6 space-y-40">
-            <!-- Data Trends -->
-            <div id="market-trends" class="animate-in fade-in duration-700">
+            <!-- Market Trends -->
+            <div id="market-trends">
                 <div class="grid lg:grid-cols-2 gap-20 items-center">
                     <div>
-                        <h2 class="text-4xl font-extrabold text-white mb-8 italic tracking-tighter">產業動態可視化</h2>
-                        <p class="text-slate-400 mb-10 leading-relaxed font-medium">基於 2025 年度產業需求分析報告，理工人才在澳門適度多元化轉型中扮演著核心角色。以下為各領域未來三年的增長潛力預測。</p>
+                        <h2 class="text-4xl font-extrabold text-white mb-8 italic tracking-tighter underline decoration-blue-600 underline-offset-8">產業動向可視化</h2>
+                        <p class="text-slate-400 mb-10 leading-relaxed font-medium">理工人才在澳門適度多元化轉型中扮演核心角色。以下為各領域未來三年的增長潛力預測。</p>
                         <div class="space-y-6">
-                            <div class="glass-card p-6 rounded-3xl flex items-center space-x-6 border-white/5">
+                            <div class="glass-card p-6 rounded-3xl flex items-center space-x-6">
                                 <div class="w-16 h-16 bg-blue-500/10 rounded-2xl flex items-center justify-center text-blue-400 font-extrabold text-xl">85%</div>
-                                <div><h4 class="font-bold text-white">智慧城市與數據治理</h4><p class="text-xs text-slate-500 mt-1">覆蓋網絡安全、雲架構與政務數字化。</p></div>
+                                <div><h4 class="font-bold text-white uppercase tracking-widest text-xs">智慧城市與數據治理</h4><p class="text-[10px] text-slate-500 mt-1 italic">網絡安全、雲架構與政務數字化</p></div>
                             </div>
-                            <div class="glass-card p-6 rounded-3xl flex items-center space-x-6 border-white/5">
+                            <div class="glass-card p-6 rounded-3xl flex items-center space-x-6">
                                 <div class="w-16 h-16 bg-emerald-500/10 rounded-2xl flex items-center justify-center text-emerald-400 font-extrabold text-xl">72%</div>
-                                <div><h4 class="font-bold text-white">微電子與集成電路</h4><p class="text-xs text-slate-500 mt-1">與橫琴深合區芯片設計產業鏈高度對標。</p></div>
+                                <div><h4 class="font-bold text-white uppercase tracking-widest text-xs">微電子與集成電路</h4><p class="text-[10px] text-slate-500 mt-1 italic">對標橫琴深合區芯片產業鏈</p></div>
                             </div>
                         </div>
                     </div>
-                    <div class="glass-card p-12 rounded-[4rem] border-white/5">
+                    <div class="glass-card p-12 rounded-[4rem]">
                         <div class="flex items-end justify-between h-64 gap-3 px-2">
-                            <div class="flex flex-col items-center w-full group"><div class="w-full bg-blue-500 chart-bar rounded-t-xl" style="height: 95%"></div><span class="text-[10px] font-bold mt-4 text-slate-500">CS</span></div>
-                            <div class="flex flex-col items-center w-full group"><div class="w-full bg-indigo-500 chart-bar rounded-t-xl" style="height: 80%"></div><span class="text-[10px] font-bold mt-4 text-slate-500">ECE</span></div>
-                            <div class="flex flex-col items-center w-full group"><div class="w-full bg-emerald-500 chart-bar rounded-t-xl" style="height: 70%"></div><span class="text-[10px] font-bold mt-4 text-slate-500">EME</span></div>
-                            <div class="flex flex-col items-center w-full group"><div class="w-full bg-orange-500 chart-bar rounded-t-xl" style="height: 75%"></div><span class="text-[10px] font-bold mt-4 text-slate-500">CIVIL</span></div>
-                            <div class="flex flex-col items-center w-full group"><div class="w-full bg-rose-500 chart-bar rounded-t-xl" style="height: 65%"></div><span class="text-[10px] font-bold mt-4 text-slate-500">APC</span></div>
-                            <div class="flex flex-col items-center w-full group"><div class="w-full bg-cyan-500 chart-bar rounded-t-xl" style="height: 90%"></div><span class="text-[10px] font-bold mt-4 text-slate-500">MATH</span></div>
+                            <div class="flex flex-col items-center w-full"><div class="w-full bg-blue-500 chart-bar rounded-t-xl" style="height: 95%"></div><span class="text-[10px] font-extrabold mt-4 text-slate-500 italic">CS</span></div>
+                            <div class="flex flex-col items-center w-full"><div class="w-full bg-indigo-500 chart-bar rounded-t-xl" style="height: 80%"></div><span class="text-[10px] font-extrabold mt-4 text-slate-500 italic">ECE</span></div>
+                            <div class="flex flex-col items-center w-full"><div class="w-full bg-emerald-500 chart-bar rounded-t-xl" style="height: 70%"></div><span class="text-[10px] font-extrabold mt-4 text-slate-500 italic">EME</span></div>
+                            <div class="flex flex-col items-center w-full"><div class="w-full bg-orange-500 chart-bar rounded-t-xl" style="height: 75%"></div><span class="text-[10px] font-extrabold mt-4 text-slate-500 italic">CIV</span></div>
+                            <div class="flex flex-col items-center w-full"><div class="w-full bg-rose-500 chart-bar rounded-t-xl" style="height: 65%"></div><span class="text-[10px] font-extrabold mt-4 text-slate-500 italic">APC</span></div>
+                            <div class="flex flex-col items-center w-full"><div class="w-full bg-cyan-500 chart-bar rounded-t-xl" style="height: 90%"></div><span class="text-[10px] font-extrabold mt-4 text-slate-500 italic">MAT</span></div>
                         </div>
-                        <p class="text-center text-[10px] font-extrabold text-slate-600 uppercase tracking-widest mt-10">2026 STEM Demand Index (Macau/GBA)</p>
+                        <p class="text-center text-[10px] font-extrabold text-slate-600 uppercase tracking-widest mt-10 italic">2026 STEM Demand Index</p>
                     </div>
                 </div>
             </div>
 
             <!-- Major Explorer -->
             <div id="major-analysis" class="scroll-mt-32">
-                <div class="text-center mb-16">
-                    <h2 class="text-4xl font-extrabold text-white mb-6">學科深度圖譜</h2>
-                    <p class="text-slate-400 max-w-2xl mx-auto">點擊各類別，了解學科的分支方向、對應部門及實質性進階建議。</p>
+                <div class="glass-card p-4 rounded-[2.5rem] mb-12 flex flex-wrap gap-2">
+                    <button onclick="switchMajor('cs')" id="btn-cs" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all rounded-2xl">電腦科學</button>
+                    <button onclick="switchMajor('ece')" id="btn-ece" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all rounded-2xl">電子系統</button>
+                    <button onclick="switchMajor('eme')" id="btn-eme" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all rounded-2xl">機電工程</button>
+                    <button onclick="switchMajor('civil')" id="btn-civil" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all rounded-2xl">土木基建</button>
+                    <button onclick="switchMajor('apc')" id="btn-apc" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all rounded-2xl">科研材料</button>
+                    <button onclick="switchMajor('math')" id="btn-math" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all rounded-2xl">數學數據</button>
                 </div>
-                <div class="glass-card p-3 rounded-[2.5rem] mb-12 flex flex-wrap gap-2 border-white/5">
-                    <button onclick="switchMajor('cs')" id="btn-cs" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all text-slate-500 rounded-2xl">電腦科學</button>
-                    <button onclick="switchMajor('ece')" id="btn-ece" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all text-slate-500 rounded-2xl">電子系統</button>
-                    <button onclick="switchMajor('eme')" id="btn-eme" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all text-slate-500 rounded-2xl">機電工程</button>
-                    <button onclick="switchMajor('civil')" id="btn-civil" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all text-slate-500 rounded-2xl">土木基建</button>
-                    <button onclick="switchMajor('apc')" id="btn-apc" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all text-slate-500 rounded-2xl">科研材料</button>
-                    <button onclick="switchMajor('math')" id="btn-math" class="flex-1 py-4 text-[10px] font-extrabold uppercase tracking-widest transition-all text-slate-500 rounded-2xl">數學數據</button>
-                </div>
-                <div id="major-content-area" class="glass-card rounded-[4rem] p-12 md:p-20 border-white/5 min-h-[550px] transition-all">
-                    <!-- Switch content -->
-                </div>
+                <div id="major-content-area" class="glass-card rounded-[4rem] p-12 md:p-20 border-white/5 min-h-[550px] transition-all"></div>
             </div>
 
-            <!-- Region Advice -->
-            <div id="region-matrix" class="scroll-mt-32 pb-40">
-                <div class="grid md:grid-cols-4 gap-8">
-                    <div class="glass-card p-10 rounded-[3rem] border-b-8 border-blue-500"><h4 class="text-xl font-bold text-blue-400 mb-4">🇲🇴 澳門</h4><p class="text-sm text-slate-400 leading-relaxed font-medium italic">「政策紅利與本地社交」</p><p class="text-xs text-slate-500 mt-4 leading-relaxed">適合目標為公務員或大型博企後台者。強調在地優勢，證照互認最直接。</p></div>
-                    <div class="glass-card p-10 rounded-[3rem] border-b-8 border-red-500"><h4 class="text-xl font-bold text-red-400 mb-4">🇨🇳 內地</h4><p class="text-sm text-slate-400 leading-relaxed font-medium italic">「大廠履歷與技術深度」</p><p class="text-xs text-slate-500 mt-4 leading-relaxed">追求純技術研發的最佳戰場。北京、深圳的大廠實習含金量冠絕亞洲。</p></div>
-                    <div class="glass-card p-10 rounded-[3rem] border-b-8 border-emerald-500"><h4 class="text-xl font-bold text-emerald-400 mb-4">🇭🇰 香港</h4><p class="text-sm text-slate-400 leading-relaxed font-medium italic">「國際諮詢與全球流動」</p><p class="text-xs text-slate-500 mt-4 leading-relaxed">全英環境與外資企業的首選跳板。適合渴望國際化職涯與高薪競爭的人才。</p></div>
-                    <div class="glass-card p-10 rounded-[3rem] border-b-8 border-slate-400"><h4 class="text-xl font-bold text-slate-200 mb-4">🇹🇼 台灣</h4><p class="text-sm text-slate-400 leading-relaxed font-medium italic">「硬件底蘊與紮實實作」</p><p class="text-xs text-slate-500 mt-4 leading-relaxed">半導體與電子工程的黃埔軍校。實驗室資源豐富，適合沉浸式研究硬件工藝。</p></div>
-                </div>
+            <!-- Regions -->
+            <div id="region-matrix" class="grid md:grid-cols-4 gap-8 pb-40">
+                <div class="glass-card p-10 rounded-[3rem] border-b-4 border-blue-500"><h4 class="font-bold text-blue-400 mb-4 italic text-lg uppercase">🇲🇴 澳門</h4><p class="text-xs text-slate-500 leading-relaxed">追求穩定性、本地公務員或博企管理的首選。強調人脈佈局與證照互認。</p></div>
+                <div class="glass-card p-10 rounded-[3rem] border-b-4 border-red-500"><h4 class="font-bold text-red-400 mb-4 italic text-lg uppercase">🇨🇳 內地</h4><p class="text-xs text-slate-500 leading-relaxed">純技術研發的頂級戰場。北上深大廠實習含金量極高，產業鏈深度全球領先。</p></div>
+                <div class="glass-card p-10 rounded-[3rem] border-b-4 border-emerald-500"><h4 class="font-bold text-emerald-400 mb-4 italic text-lg uppercase">🇭🇰 香港</h4><p class="text-xs text-slate-500 leading-relaxed">全英環境、高壓競爭。與國際金融及跨國諮詢直接對接，具備極強全球流動性。</p></div>
+                <div class="glass-card p-10 rounded-[3rem] border-b-4 border-slate-400"><h4 class="font-bold text-slate-200 mb-4 italic text-lg uppercase">🇹🇼 台灣</h4><p class="text-xs text-slate-500 leading-relaxed">半導體與機電硬件的黃埔軍校。紮實的實作基礎，適合深鑽硬件工藝與研發。</p></div>
             </div>
         </div>
     </section>
 
     <script>
         const majorData = {
-            cs: {
-                title: "電腦科學與軟件工程",
-                tag: "數據治理 / AI 驅動 / 網絡安全",
-                fullDesc: "CS 是所有數碼化進程的基礎。不僅是編程，更是處理複雜度的方法論。",
-                subFields: ["人工智慧與機器學習", "網絡安全與密碼學", "分佈式與雲端架構", "遊戲開發與圖形學"],
-                consideration: "需要極強的數學建模能力。如果你享受在 0 與 1 之間構建無限可能，這是最具未來性的選擇。",
-                salary: "AI 與大數據方向目前擁有全球最強的溢價。澳門博企正大力招聘數據中心運維與安全人才。",
-                actions: ["大一：建立 GitHub 專頁並熟練一門主流語言","大二：參與開源項目或算法競賽 (LeetCode)","大三：考取雲端認證並申請博企實習"],
-                macauPath: "博企 IT 部門、本地 Fintech 創新公司、政府行政公職局技術職系。",
-                careerLadder: "Junior Dev → Senior Architect → CTO / 數據科學家。"
-            },
-            ece: {
-                title: "電子及電腦工程 (ECE)",
-                tag: "芯片設計 / IoT 傳感 / 硬核通訊",
-                fullDesc: "專注於物理設備與數碼信號的交互。包含微電子設計、物聯網整合及智能機器人控制。",
-                subFields: ["集成電路設計 (IC)", "嵌入式系統與韌體", "無線通訊與 6G", "生物醫療電子"],
-                consideration: "對物理、信號處理感興趣。此學科是澳門重點發展的高新科技核心，也是橫琴產業發展的主力。",
-                salary: "微電子設計人才在大灣區起薪點極高，且具備極高的專業技術門檻。",
-                actions: ["大一：掌握 C 語言與基礎電路實驗","大二：學習 FPGA 與硬體描述語言 (Verilog)","大三：爭取進入國家重點實驗室實習"],
-                macauPath: "微電子研發中心、智能家居系統集成商、CTM 技術部門、橫琴芯片研發基地。",
-                careerLadder: "設計工程師 → 系統架構師 → 研發主管 / 項目合夥人。"
-            },
-            eme: {
-                title: "機電工程 (EME)",
-                tag: "綠色建築 / 智能製造 / 能源維保",
-                fullDesc: "研究機械能與電能的轉化與自動控制。是維繫整座城市與酒店度假村正常運轉的後台支援。",
-                subFields: ["自動化與機器人", "暖通空調與節能系統", "流體力學與精密製造", "可再生能源技術"],
-                consideration: "適合對物理結構與自動化有直覺的同學。這是一個穩定性極高、且技術隨年資指數增長的專業。",
-                salary: "在澳門是長期剛需。持有專業機電證照的工程師薪酬結構優越，項目補貼豐富。",
-                actions: ["大一：熟練 CAD/BIM 繪圖與基礎力學","大二：學習 PLC 控制與機器人編程","大三：考取安全證照並進入度假村設施部實習"],
-                macauPath: "綜合度假村設施部、公共交通機構、能源顧問公司、建築發展商。",
-                careerLadder: "工程助理 → 註冊機電工程師 → 設施總監 / 項目經理。"
-            },
-            civil: {
-                title: "土木與環境工程",
-                tag: "城市基建 / 環境評估 / 結構規劃",
-                fullDesc: "土木工程塑造了城市的骨架。澳門作為填海與大型公建頻繁的地區，對結構、環境人才需求持續。",
-                subFields: ["結構工程與抗震", "岩土工程與地下空間", "環境監測與污染控制", "基建數字化管理"],
-                consideration: "需要強大的協調能力。在公務員體系與顧問公司中，土木工程師具有極高的決策話語權。",
-                salary: "政府技術員與大型顧問公司起薪極其穩定，晉升制度透明。",
-                actions: ["大一：掌握測繪技術與材料力學","大二：學習結構模擬軟體 (SAP2000) 並了解法規","大三：完成技術員註冊準備並在大型工地實習"],
-                macauPath: "工務局、市政署、大型建築顧問公司、海事及水務局技術職位。",
-                careerLadder: "見習工程師 → 註冊技術員 → 處長 / 顧問工程師。"
-            },
-            apc: {
-                title: "應用物理與化學",
-                tag: "新材料 / 大健康科研 / 能源探究",
-                fullDesc: "理工科的源頭，研究物質底層機理。對標澳門『1+4』中大健康產業的研發與材料科學。",
-                subFields: ["光電子學與激光技術", "奈米材料與能源化學", "藥物化學與製劑研發", "環境分析科學"],
-                consideration: "適合有志於深造、具備強大好奇心的學生。這門學科的終點通常是研發中心或資深科學家。",
-                salary: "碩博畢業進入高科技企業 R&D 核心的薪資回報具有極高的爆發力。",
-                actions: ["大一：打好實驗基礎，積極加入導師研究項目","大二：掌握高端分析儀器操作 (SEM/XRD)","大三：發表階段性成果並準備申請頂級大學碩博"],
-                macauPath: "中醫藥產業園、環保檢測中心、高新材料初創實驗室、製藥廠 R&D。",
-                careerLadder: "分析員 → 研發研究員 → 首席科學家 / 實驗室主任。"
-            },
-            math: {
-                title: "數學與數據科學",
-                tag: "量化金融 / 決策引擎 / 統計分析",
-                fullDesc: "數據是新石油，數學是提煉廠。無論是現代金融的避險模型，還是博彩精算，數學是決策核心。",
-                subFields: ["量化金融與風險管理", "統計學習與數據探勘", "計算數學與數碼模擬", "精算科學"],
-                consideration: "需要極高的抽象思考能力。如果你喜歡在數字中尋找模式，這裡能讓你通吃多個高薪行業。",
-                salary: "在量化交易、銀行風控及大數據策略崗位，數學背景人才的薪酬天花板極高。",
-                actions: ["大一：打好代數基礎，自學一門數據語言 (R/Python)","大二：參加建模競賽 (MCM) 訓練實戰感","大三：考取 CFA 或精算基礎並在銀行實習"],
-                macauPath: "銀行風險管理部、大型投資基金、博企精算中心、統計暨普查局。",
-                careerLadder: "分析師 → 量化研究員 → 基金經理 / 風控總監。"
-            }
+            cs: { title: "電腦科學與軟件工程", tag: "數據治理 / AI 驅動 / 網絡安全", fullDesc: "CS 是所有數碼化進程的基礎，專注於高效能代碼架構與智能算法應用。", subFields: ["人工智慧", "網絡安全", "雲端架構", "大數據"], consideration: "需要強大數學建模與對新技術的飢渴。數位建造者的首選。", salary: "AI 溢價極高，目前市場上薪資上限最高的專業之一。", actions: ["大一：GitHub 建檔","大二：LeetCode 練習","大三：雲端認證"], macauPath: "博企 IT 部門、本地 Fintech 公司、政府技術官系。", careerLadder: "工程師 → 架構師 → CTO / 數據科學家。" },
+            ece: { title: "電子及電腦工程 (ECE)", tag: "芯片設計 / IoT 傳感 / 硬核通訊", fullDesc: "專注於物理設備與數碼信號的交互，是芯片國產化浪潮的核心引擎。", subFields: ["IC 設計", "嵌入式系統", "5G/6G 通訊", "機器人控制"], consideration: "對物理、電路感興趣。此學科是澳門橫琴產業發展的主力方向。", salary: "芯片研發人才供不應求，具備高技術壁壘與穩定高薪。", actions: ["大一：電路實驗","大二：FPGA 學習","大三：實驗室實習"], macauPath: "微電子研發中心、智能家居系統、橫琴芯片基地。", careerLadder: "設計工程師 → 系統專家 → 研發主管。" },
+            eme: { title: "機電工程 (EME)", tag: "綠色建築 / 智能製造 / 能源維保", fullDesc: "研究能量轉化與自動控制，維繫城市與大型度假村正常運轉的核心技術。", subFields: ["自動化", "節能系統", "流體力學", "機器人"], consideration: "適合對機械結構與實體運作有直覺的同學，經驗愈老愈值錢。", salary: "在澳門是長期剛需。註冊工程師薪酬結構優越，職涯穩定性極佳。", actions: ["大一：CAD 繪圖","大二：PLC 控制","大三：安全主任證書"], macauPath: "博企設施部、公營事業、建築發展商。", careerLadder: "助理工程師 → 註冊工程師 → 設施總監。" },
+            civil: { title: "土木與環境工程", tag: "城市基建 / 環境評估 / 結構規劃", fullDesc: "塑造城市物理輪廓。澳門作為填海與大基建頻繁區，需求持續強勁。", subFields: ["結構抗震", "岩土工程", "環境監測", "基建管理"], consideration: "需要強大的協調與實地應變能力。在公務員體系中具備極高權威。", salary: "政府技術員起薪極其穩定，是專業人士進入公職體系的常見跳板。", actions: ["大一：測繪技術","大二：結構軟體","大三：考取技術員註冊"], macauPath: "工務局、市政署、大型建築顧問公司。", careerLadder: "見習員 → 註冊技術員 → 顧問工程師。" },
+            apc: { title: "應用物理與化學", tag: "新材料 / 大健康科研 / 能源探究", fullDesc: "理工科的源頭，研究物質底層機理。對標澳門『1+4』中大健康產業研發。", subFields: ["奈米材料", "藥物化學", "光電技術", "環境分析"], consideration: "適合具備強大好奇心與耐受度的學生。終點通常是研發中心或資深科學家。", salary: "大學畢業起薪基礎，但碩博畢業進入研發核心後具備爆發性薪酬回報。", actions: ["大一：實驗室基礎","大二：精密儀器操作","大三：發表學術論文助理"], macauPath: "橫琴中醫藥園、檢測中心、高新材料初創實驗室。", careerLadder: "分析員 → 研發員 → 首席科學家。" },
+            math: { title: "數學與數據科學", tag: "量化金融 / 決策引擎 / 統計分析", fullDesc: "數據時代的靈魂。無論是金融避險模型還是博彩精算，數學是決策核心。", subFields: ["量化風險管理", "統計學習", "精算科學", "數據探勘"], consideration: "需要極高的抽象思考能力。如果你享受規律發現，這裡能讓你通吃高薪行業。", salary: "在量化交易、風控及大數據策略崗位，薪酬上限屬於全行業頂尖。", actions: ["大一：微積分基礎","大二：建模大賽 (MCM)","大三：精算/CFA 證照"], macauPath: "銀行風控部、大型投資基金、博企精算部。", careerLadder: "分析師 → 量化研究員 → 基金經理。" }
         };
 
-        // Expanded 8 Quiz Questions
         const quizQuestions = [
-            { text: "當你購買了一個極其複雜的模型或家具，你通常會？", options: [{ text: "先花一小時分類零件並研讀說明書，理解邏輯順序再動手", score: { logic: 2, micro: 1 } }, { text: "憑直覺直接動手組裝，遇到組裝不上的瓶頸才回頭翻閱圖紙", score: { physical: 2, apply: 1 } }] },
-            { text: "在觀看科幻電影或科技新聞時，最讓你感到興奮的是？", options: [{ text: "微小但強大的芯片、優雅的代碼邏輯與 AI 的思維模擬", score: { micro: 2, logic: 1 } }, { text: "震撼的跨海大橋、巨型機甲、星際城市或震撼的行星基建", score: { macro: 2, apply: 1 } }] },
-            { text: "如果你有充足的時間去鑽研一個新興趣，你更傾向於？", options: [{ text: "安靜地在室內玩解謎、寫一段小代碼或研究數據模式", score: { research: 2, micro: 1 } }, { text: "在戶外、實驗室或車庫裡操作實體工具，修理或改良某個物件", score: { apply: 2, macro: 1 } }] },
-            { text: "你希望你未來的產品能如何改變社會？", options: [{ text: "通過更聰明的 App 或算法，讓人們的信息獲取與決策更高效", score: { logic: 2, research: 1 } }, { text: "通過更堅固的結構或高效的能源，改善人們居住與移動的體驗", score: { physical: 2, macro: 1 } }] },
-            { text: "在一個項目團隊中，你更喜歡扮演的角色是？", options: [{ text: "設計師/架構師：負責全局邏輯的搭建與規則的制定", score: { logic: 2, research: 1 } }, { text: "實踐者/工藝師：負責將藍圖具體實現並確保質量完美", score: { physical: 2, apply: 1 } }] },
-            { text: "面對一個從未接觸過的電子產品，你習慣？", options: [{ text: "先去查閱網絡文獻或官方文檔，了解其核心運作原理", score: { research: 2, micro: 1 } }, { text: "直接瘋狂按按鈕並拆解外殼，通過實測發現其功能邊界", score: { apply: 2, physical: 1 } }] },
-            { text: "如果讓你選擇一組工具，你更心儀？", options: [{ text: "擁有強大計算能力的開發者套件與大數據分析軟件", score: { logic: 2, micro: 1 } }, { text: "配備精密感應器的自動化機械手臂與 3D 打印實體工具", score: { physical: 2, apply: 1 } }] },
-            { text: "在學習一個數學公式時，你通常？", options: [{ text: "對公式背後的推導過程與邏輯證明有無比的興趣", score: { research: 2, logic: 1 } }, { text: "更關心這個公式能在哪個實際工程場景中被應用", score: { apply: 2, macro: 1 } }] }
+            { text: "當你購買了一個極其複雜的模型或家具，你通常會？", options: [{ text: "先分類零件並研讀說明書，理解邏輯順序再動手", score: { logic: 2, research: 1 } }, { text: "憑直覺直接動手組裝，遇到瓶頸才回頭翻閱圖紙", score: { physical: 2, apply: 1 } }] },
+            { text: "在觀看科幻電影或科技新聞時，什麼最讓你興奮？", options: [{ text: "微小芯片內部的電路圖、優雅的代碼邏輯與 AI 思維", score: { micro: 2, logic: 1 } }, { text: "震撼的跨海大橋、巨型機甲、星際城市或震撼基建", score: { macro: 2, apply: 1 } }] },
+            { text: "如果你有充足的時間去鑽研一個新興趣，你更傾向於？", options: [{ text: "安靜地在室內玩燒腦解謎、寫小代碼或研究規律", score: { research: 2, logic: 1 } }, { text: "在戶外、實驗室或車庫裡操作實體工具修理或改良", score: { apply: 2, physical: 1 } }] },
+            { text: "你希望你未來的產品能如何改變社會？", options: [{ text: "通過更聰明的 App 或算法，解決人們的信息效率問題", score: { logic: 2, micro: 1 } }, { text: "通過更堅固的結構或高效機器，改善人們的物理生活", score: { physical: 2, macro: 1 } }] },
+            { text: "在一個項目團隊中，你更喜歡扮演的角色是？", options: [{ text: "設計師/架構師：負責全局邏輯的搭建與規則制定", score: { logic: 2, research: 1 } }, { text: "實踐者/工藝師：負責將藍圖實現並確保質量完美", score: { physical: 2, apply: 1 } }] },
+            { text: "面對一個從未接觸過的電子產品，你習慣？", options: [{ text: "先去查閱網絡文獻或說明書，了解其核心運作原理", score: { research: 2, micro: 1 } }, { text: "直接瘋狂按按鈕，通過實測發現其功能邊界", score: { apply: 2, physical: 1 } }] },
+            { text: "如果讓你選擇一組工具，你更心儀？", options: [{ text: "擁有強大計算能力的開發者套件與數據分析軟體", score: { logic: 2, research: 1 } }, { text: "配備精密感應器的自動化機械手臂與 3D 打印實體工具", score: { physical: 2, apply: 1 } }] },
+            { text: "在學習一個數學公式時，你通常？", options: [{ text: "對公式背後的推導過程與邏輯證明有無比的好奇心", score: { research: 2, logic: 1 } }, { text: "更關心這個公式能在哪個實際工程場景中被應用", score: { apply: 2, physical: 1 } }] }
         ];
 
-        // Global State
         let userGrades = { math: 0, phys: 0, eng: 0 };
         let quizScores = { logic: 0, physical: 0, micro: 0, macro: 0, research: 0, apply: 0 };
         let currentQuizStep = 0;
@@ -360,27 +275,19 @@
         }
 
         function renderQuestion() {
-            const stepLabel = document.getElementById('q-step-label');
-            const qText = document.getElementById('q-text');
-            const qOptions = document.getElementById('q-options');
-            const progressBar = document.getElementById('quiz-progress');
-            const miniProgress = document.getElementById('q-mini-progress');
-
             if (currentQuizStep < quizQuestions.length) {
                 const q = quizQuestions[currentQuizStep];
-                stepLabel.innerText = `Assessment Q${currentQuizStep + 1}/8`;
-                qText.innerText = q.text;
+                document.getElementById('q-step-label').innerText = `Assessment Q${currentQuizStep + 1}/8`;
+                document.getElementById('q-text').innerText = q.text;
                 const prog = ((currentQuizStep + 1) / quizQuestions.length) * 100;
-                progressBar.style.width = `${prog}%`;
-                miniProgress.style.width = `${prog}%`;
+                document.getElementById('quiz-progress').style.width = `${prog}%`;
+                document.getElementById('q-mini-progress').style.width = `${prog}%`;
                 
-                qOptions.innerHTML = q.options.map((opt, idx) => `
-                    <button onclick="handleAnswer(${idx})" class="option-btn w-full text-left p-6 rounded-[2rem] group">
-                        <div class="flex items-center justify-between">
-                            <span class="font-bold text-slate-300 group-hover:text-blue-400 leading-tight pr-4">${opt.text}</span>
-                            <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 group-hover:bg-blue-600 transition-all">
-                                <svg class="w-4 h-4 text-slate-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
-                            </div>
+                document.getElementById('q-options').innerHTML = q.options.map((opt, idx) => `
+                    <button onclick="handleAnswer(${idx})" class="option-btn w-full text-left p-6 rounded-[2rem] group flex justify-between items-center">
+                        <span class="font-bold text-slate-300 group-hover:text-blue-400 leading-tight pr-4">${opt.text}</span>
+                        <div class="w-10 h-10 rounded-xl flex items-center justify-center bg-white/5 group-hover:bg-blue-600 transition-all">
+                            <svg class="w-4 h-4 text-slate-500 group-hover:text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14 5l7 7m0 0l-7 7m7-7H3"></path></svg>
                         </div>
                     </button>
                 `).join('');
@@ -396,56 +303,56 @@
 
         function calculateResult() {
             let resultKey = "cs";
-            if (quizScores.logic > quizScores.physical) {
+            // 邏輯核心 (Math-Driven)
+            if (quizScores.logic >= quizScores.physical) {
                 if (userGrades.math >= 3) {
-                    resultKey = (quizScores.research > quizScores.apply) ? "math" : "cs";
+                    if (quizScores.research > quizScores.apply) resultKey = "math";
+                    else if (quizScores.micro > quizScores.macro) resultKey = "cs";
+                    else resultKey = "apc";
                 } else { resultKey = "cs"; }
-            } else {
+            } 
+            // 實體核心 (Physics-Driven)
+            else {
                 if (userGrades.phys >= 3) {
-                    resultKey = (quizScores.macro > quizScores.micro) ? "civil" : "ece";
+                    if (quizScores.macro > quizScores.micro) resultKey = "civil";
+                    else if (quizScores.apply > quizScores.research) resultKey = "eme";
+                    else resultKey = "ece";
                 } else { resultKey = "eme"; }
             }
             showResultView(resultKey);
         }
 
         function showResultView(key) {
-            const data = majorData[key];
+            const data = majorData[key] || majorData['cs'];
             const resultCard = document.getElementById('result-detail-card');
             resultCard.innerHTML = `
-                <div class="p-10 md:p-20">
+                <div class="p-10 md:p-20 view-section">
                     <div class="grid lg:grid-cols-2 gap-20">
                         <div>
-                            <div class="inline-flex items-center space-x-3 bg-blue-500/10 text-blue-400 px-5 py-2 rounded-full text-[10px] font-extrabold uppercase mb-8 border border-blue-500/20">Elite Recommendation</div>
-                            <h3 class="text-5xl font-extrabold text-white mb-6 leading-none tracking-tighter">${data.title}</h3>
+                            <div class="inline-flex items-center space-x-3 bg-blue-500/10 text-blue-400 px-5 py-2 rounded-full text-[10px] font-extrabold uppercase mb-8 border border-blue-500/20 shadow-glow">Elite Recommendation</div>
+                            <h3 class="text-5xl font-extrabold text-white mb-6 leading-none tracking-tighter italic">${data.title}</h3>
                             <p class="text-blue-400 font-extrabold mb-8 italic text-xl border-l-4 border-blue-600 pl-4">「${data.tag}」</p>
                             <p class="text-slate-400 text-lg leading-relaxed mb-12 font-medium">${data.fullDesc}</p>
                             <div class="space-y-6">
                                 <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 shadow-inner">
-                                    <h5 class="font-bold text-slate-500 mb-3 uppercase text-xs tracking-widest">核心研究分支</h5>
-                                    <div class="flex flex-wrap gap-2">
-                                        ${data.subFields.map(f => `<span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-lg text-xs font-bold">${f}</span>`).join('')}
-                                    </div>
+                                    <h5 class="font-bold text-slate-500 mb-3 uppercase text-xs tracking-widest italic">核心研究分支</h5>
+                                    <div class="flex flex-wrap gap-2">${data.subFields.map(f => `<span class="bg-slate-800 text-slate-300 px-3 py-1 rounded-lg text-xs font-bold">${f}</span>`).join('')}</div>
                                 </div>
                                 <div class="bg-white/5 p-8 rounded-[2.5rem] border border-white/5 shadow-inner">
-                                    <h5 class="font-bold text-slate-500 mb-3 uppercase text-xs tracking-widest">長遠職涯梯隊</h5>
-                                    <p class="text-sm text-slate-300 leading-relaxed font-bold italic">${data.careerLadder}</p>
+                                    <h5 class="font-bold text-slate-500 mb-3 uppercase text-xs tracking-widest italic">職涯發展梯隊</h5>
+                                    <p class="text-sm text-slate-300 font-bold italic underline decoration-blue-500 underline-offset-4">${data.careerLadder}</p>
                                 </div>
                             </div>
                         </div>
                         <div class="space-y-10">
                             <div class="bg-blue-600/10 p-12 rounded-[4rem] border border-blue-500/10 shadow-2xl relative overflow-hidden">
-                                <div class="absolute top-0 right-0 w-64 h-64 bg-blue-500/10 blur-[100px] rounded-full"></div>
-                                <h4 class="text-2xl font-extrabold text-white mb-10 italic flex items-center italic">大學行動清單</h4>
-                                <ul class="space-y-8">
-                                    ${data.actions.map((a, i) => `<li class="flex items-start text-base text-slate-300 font-medium leading-relaxed"><span class="w-8 h-8 bg-blue-600 text-white text-xs rounded-2xl flex items-center justify-center mr-5 mt-0.5 shrink-0 font-extrabold italic shadow-lg shadow-blue-500/30">${i+1}</span>${a}</li>`).join('')}
-                                </ul>
+                                <h4 class="text-2xl font-extrabold text-white mb-10 italic flex items-center italic underline decoration-blue-600 decoration-4">大學行動清單</h4>
+                                <ul class="space-y-8">${data.actions.map((a, i) => `<li class="flex items-start text-base text-slate-300 font-medium leading-relaxed"><span class="w-8 h-8 bg-blue-600 text-white text-xs rounded-2xl flex items-center justify-center mr-5 mt-0.5 shrink-0 font-extrabold shadow-lg">${i+1}</span>${a}</li>`).join('')}</ul>
                             </div>
-                            <div class="p-12 border border-emerald-500/10 bg-emerald-500/5 rounded-[4rem] relative overflow-hidden">
-                                <h4 class="font-extrabold text-white mb-8 flex items-center text-xl tracking-tight"><svg class="w-7 h-7 mr-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>澳門落地對標建議</h4>
+                            <div class="p-12 border border-emerald-500/10 bg-emerald-500/5 rounded-[4rem]">
+                                <h4 class="font-extrabold text-white mb-8 flex items-center text-xl tracking-tight uppercase"><svg class="w-7 h-7 mr-4 text-emerald-400" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>澳門落地與產業建議</h4>
                                 <p class="text-base text-slate-400 leading-relaxed mb-8 font-bold italic border-l-4 border-emerald-500/50 pl-4">${data.macauPath}</p>
-                                <div class="flex flex-wrap gap-3">
-                                    ${data.jobs.map(j => `<span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-5 py-2 rounded-2xl text-xs font-extrabold shadow-sm">${j}</span>`).join('')}
-                                </div>
+                                <div class="flex flex-wrap gap-3">${data.jobs.map(j => `<span class="bg-emerald-500/10 border border-emerald-500/20 text-emerald-400 px-5 py-2 rounded-2xl text-xs font-extrabold shadow-sm">${j}</span>`).join('')}</div>
                             </div>
                         </div>
                     </div>
@@ -464,35 +371,30 @@
         }
 
         function switchMajor(id) {
-            const data = majorData[id];
+            const data = majorData[id] || majorData['cs'];
             const contentArea = document.getElementById('major-content-area');
             contentArea.classList.add('opacity-0', 'scale-95');
             setTimeout(() => {
                 contentArea.innerHTML = `
-                    <div class="grid lg:grid-cols-2 gap-20 animate-in fade-in slide-in-from-bottom duration-700">
+                    <div class="grid lg:grid-cols-2 gap-20 view-section">
                         <div>
                             <div class="flex items-center space-x-3 mb-10">
-                                <span class="bg-blue-600 text-white px-5 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-widest shadow-lg shadow-blue-500/20">${data.tag.split(' / ')[0]}</span>
-                                <span class="text-slate-600 text-[10px] font-extrabold tracking-widest uppercase">ID: ${id}</span>
+                                <span class="bg-blue-600 text-white px-5 py-2 rounded-xl text-[10px] font-extrabold uppercase tracking-widest shadow-lg">${data.tag.split(' / ')[0]}</span>
+                                <span class="text-slate-600 text-[10px] font-extrabold tracking-widest uppercase italic">CODE: ${id.toUpperCase()}</span>
                             </div>
                             <h3 class="text-5xl font-extrabold text-white mb-10 tracking-tighter italic leading-none">${data.title}</h3>
                             <p class="text-slate-400 text-xl leading-relaxed mb-12 font-medium">${data.fullDesc}</p>
                             <div class="space-y-8">
                                 <p class="text-xs font-extrabold text-slate-500 uppercase tracking-widest">核心職能覆蓋：</p>
-                                <div class="flex flex-wrap gap-3">
-                                    ${data.jobs.map(j => `<span class="bg-white/5 text-slate-300 px-5 py-3 rounded-2xl text-xs font-bold border border-white/5 shadow-inner">${j}</span>`).join('')}
-                                </div>
+                                <div class="flex flex-wrap gap-3">${data.jobs.map(j => `<span class="bg-white/5 text-slate-300 px-5 py-3 rounded-2xl text-xs font-bold border border-white/5 shadow-inner">${j}</span>`).join('')}</div>
                             </div>
                         </div>
-                        <div class="bg-white/5 p-12 rounded-[4rem] border border-white/5 relative group">
-                            <div class="absolute top-0 right-0 p-12 opacity-10 group-hover:opacity-20 transition-all"><svg class="w-32 h-32 text-blue-500" fill="currentColor" viewBox="0 0 24 24"><path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z"/></svg></div>
-                            <h4 class="text-2xl font-extrabold text-white mb-8 italic flex items-center italic">升學深度解析與建議</h4>
+                        <div class="bg-white/5 p-12 rounded-[4rem] border border-white/5 relative">
+                            <h4 class="text-2xl font-extrabold text-white mb-8 italic flex items-center italic">升學深入解析</h4>
                             <p class="text-base text-slate-400 mb-10 leading-relaxed font-bold italic">${data.macauPath}</p>
                             <div class="space-y-6">
-                                <p class="text-[10px] font-extrabold text-slate-600 uppercase tracking-widest">階段性任務清單</p>
-                                <ul class="space-y-5">
-                                    ${data.actions.map(a => `<li class="text-sm text-slate-300 flex items-start leading-relaxed font-bold italic"><svg class="w-5 h-5 mr-4 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>${a}</li>`).join('')}
-                                </ul>
+                                <p class="text-[10px] font-extrabold text-slate-600 uppercase tracking-widest italic">階段性任務清單</p>
+                                <ul class="space-y-5">${data.actions.map(a => `<li class="text-sm text-slate-300 flex items-start leading-relaxed font-bold italic"><svg class="w-5 h-5 mr-4 text-blue-500 shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" /></svg>${a}</li>`).join('')}</ul>
                             </div>
                         </div>
                     </div>
@@ -500,7 +402,10 @@
                 contentArea.classList.remove('opacity-0', 'scale-95');
             }, 300);
 
-            document.querySelectorAll('#major-analysis button').forEach(btn => { if (btn.id && btn.id.startsWith('btn-')) { btn.classList.remove('tab-active'); btn.classList.add('text-slate-500'); } });
+            document.querySelectorAll('#major-analysis button').forEach(btn => { 
+                btn.classList.remove('tab-active'); 
+                btn.classList.add('text-slate-500'); 
+            });
             const activeBtn = document.getElementById('btn-' + id);
             if(activeBtn) { activeBtn.classList.add('tab-active'); activeBtn.classList.remove('text-slate-500'); }
         }
